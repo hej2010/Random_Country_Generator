@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="se.swecookie.randomcountrygenerator.MainActivity"
+    android:background="@color/colorDark">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorText"/>
+
+    <ImageView
+        android:id="@+id/imgCountryFlag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/main_desc"
+        android:maxHeight="150dp"
+        android:minHeight="150dp"
+        app:srcCompat="@drawable/se" />
+
+    <TextView
+        android:id="@+id/txtCountryName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_help"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textColor="@color/colorText"/>
+
+    <Button
+        android:id="@+id/btnRandom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:onClick="onButtonClicked"
+        android:text="@string/main_generate" />
+
+</LinearLayout>

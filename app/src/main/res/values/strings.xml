@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Random Country Generator</string>
+
+    <string name="main_desc">Country flag</string>
+    <string name="main_help">Press the button to generate a random country</string>
+    <string name="main_generate">New country</string>
+</resources>
