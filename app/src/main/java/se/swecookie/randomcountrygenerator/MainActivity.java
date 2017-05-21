@@ -1,6 +1,15 @@
 package se.swecookie.randomcountrygenerator;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,9 +30,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ImageView imgCountry;
     private TextView txtCountryName;
-    private Button btnRandom;
+    private Button btnRandom, btnOpen;
 
     private List<String> countryList;
+
+    private int delayInMillis = delayOrigin;
+    private static final int delayOrigin = 20;
+
+    private MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,18 +46,97 @@ public class MainActivity extends AppCompatActivity {
 
         countryList = new ArrayList<>();
 
+        mp = MediaPlayer.create(this, R.raw.blip);
+
         imgCountry = (ImageView) findViewById(R.id.imgCountryFlag);
         txtCountryName = (TextView) findViewById(R.id.txtCountryName);
         btnRandom = (Button) findViewById(R.id.btnRandom);
-
+        btnOpen = (Button) findViewById(R.id.btnOpen);
+        btnOpen.setVisibility(View.GONE);
     }
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnRandom:
-                randomCountry();
+                btnRandom.setEnabled(false);
+                btnOpen.setEnabled(false);
+                startLoop();
+                break;
+            case R.id.btnOpen:
+                if (checkConnection()) {
+                    Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + txtCountryName.getText().toString().replace(" ", "+"));
+                    Log.e("uri", uri.toString());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                } else {
+                    showConnectionError();
+                }
+                break;
+            case R.id.txtAbout:
+                showAbout();
                 break;
         }
+    }
+
+    private void showAbout() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("About");
+        builder.setIcon(R.drawable.se);
+        builder.setMessage(getString(R.string.main_about_message));
+        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    void showConnectionError() { // If no connection
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Device offline");
+        builder.setMessage("Internet connection required! Please enable it and retry.");
+        builder.setPositiveButton("Ok, I'll turn it on!", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void startLoop() {
+        final Handler ha = new Handler();
+        ha.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mp.start();
+                randomCountry();
+                if (delayInMillis < 150) {
+                    delayInMillis += 5;
+                } else if (delayInMillis < 400) {
+                    delayInMillis += 80;
+                } else if (delayInMillis < 800) {
+                    delayInMillis += 130;
+                }
+                if (delayInMillis >= 800) {
+                    onLoopStopped();
+                    ha.removeCallbacks(this);
+                } else {
+                    ha.postDelayed(this, delayInMillis);
+                }
+            }
+        }, delayInMillis);
+    }
+
+    private void onLoopStopped() {
+        delayInMillis = delayOrigin;
+        btnRandom.setEnabled(true);
+        btnOpen.setVisibility(View.VISIBLE);
+        btnOpen.setEnabled(true);
     }
 
     private void randomCountry() {
@@ -127,6 +220,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return total.toString();
+    }
+
+    private boolean checkConnection() { //Kolla om man har anslutning till internet
+        ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) { // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                return true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
 }
