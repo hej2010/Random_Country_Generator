@@ -19,6 +19,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgCountry;
     private TextView txtCountryName;
     private Button btnRandom, btnOpen;
+    private AdView mAdView;
 
     private List<String> countryList;
 
     private int delayInMillis = delayOrigin;
     private static final int delayOrigin = 20;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private MediaPlayer mp;
 
@@ -53,6 +61,20 @@ public class MainActivity extends AppCompatActivity {
         btnRandom = (Button) findViewById(R.id.btnRandom);
         btnOpen = (Button) findViewById(R.id.btnOpen);
         btnOpen.setVisibility(View.GONE);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        // Sample AdMob app ID: ca-app-pub-xxxxxxxxxxxxxxxxxxxxxxxxxxx
+        MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        //AdRequest adRequest = new AdRequest.Builder().build();
+        //mAdView.loadAd(adRequest);
+
+        // TODO Use above when releasing app!
+        AdRequest request = new AdRequest.Builder().addTestDevice("431A0280FBBC1A69FBA40D653A0CB393").build();
+        mAdView.loadAd(request);
     }
 
     public void onButtonClicked(View view) {
@@ -61,9 +83,11 @@ public class MainActivity extends AppCompatActivity {
                 btnRandom.setEnabled(false);
                 btnOpen.setEnabled(false);
                 startLoop();
+                sendToFirebase("Clicked Random");
                 break;
             case R.id.btnOpen:
                 if (checkConnection()) {
+                    sendToFirebase("Clicked Open");
                     Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + txtCountryName.getText().toString().replace(" ", "+"));
                     Log.e("uri", uri.toString());
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -76,6 +100,13 @@ public class MainActivity extends AppCompatActivity {
                 showAbout();
                 break;
         }
+    }
+
+    private void sendToFirebase(String s) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, s);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     private void showAbout() {
@@ -192,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Resources.NotFoundException e) {
             // Set default image
             Log.e("error", "Couldn't find " + countryName);
-            imgCountry.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.mipmap.ic_launcher));
+            imgCountry.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.mipmap.ikon));
         }
 
     }
