@@ -102,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * TODO: en privacy policy https://support.google.com/admob/answer/48182?hl=sv&ref_topic=2745287
+     * Ta bort test ads och lägg till riktiga innan lansering (i activity_main.xml)
+     */
+
+
     private void sendToFirebase(String s) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, s);
