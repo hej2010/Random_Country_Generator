@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaPlayer mp;
 
+    private AlertDialog privacyBuilder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
         // TODO Use above when releasing app!
         AdRequest request = new AdRequest.Builder().addTestDevice("431A0280FBBC1A69FBA40D653A0CB393").build();
         mAdView.loadAd(request);
+
+        if (!checkIfAceptedPP()) {
+            displayPrivacyPolicyNotification();
+        }
     }
 
     public void onButtonClicked(View view) {
@@ -102,11 +109,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * TODO: en privacy policy https://support.google.com/admob/answer/48182?hl=sv&ref_topic=2745287
-     * Ta bort test ads och lägg till riktiga innan lansering (i activity_main.xml)
-     */
+    private boolean checkIfAceptedPP() {
+        SharedPreferences prefs = getSharedPreferences("accepted", MODE_PRIVATE);
+        return prefs.getBoolean("acceptedPP", false);
+    }
 
+    private void setAcceptedPP() {
+        SharedPreferences.Editor editor = getSharedPreferences("accepted", MODE_PRIVATE).edit();
+        editor.putBoolean("acceptedPP", true);
+        editor.apply();
+    }
+
+    private void displayPrivacyPolicyNotification() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Privacy Policy");
+        builder.setMessage(getString(R.string.main_privacy_policy_message));
+        builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                setAcceptedPP();
+            }
+        });
+        builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        builder.setNeutralButton("Read it", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String privacyPolicy = "https://www.swecookie.se/apps/privacy-policies/RCG-PP.pdf";
+                final Uri uri = Uri.parse("http://docs.google.com/gview?embedded=true&url=" + privacyPolicy);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        builder.setCancelable(false);
+        privacyBuilder = builder.create();
+        privacyBuilder.show();
+    }
+
+    /**
+     * Ta bort test ads och lägg till riktiga innan lansering (i activity_main.xml)
+     * http://www.iubenda.com/blog/privacy-policy-admob/
+     * https://support.google.com/admob/answer/48182?hl=en&ref_topic=2745287
+     * https://support.google.com/adsense/answer/1348695
+     * https://support.google.com/admob/answer/2753860
+     */
 
     private void sendToFirebase(String s) {
         Bundle bundle = new Bundle();
@@ -272,6 +322,14 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!checkIfAceptedPP() && !privacyBuilder.isShowing()) {
+            displayPrivacyPolicyNotification();
+        }
     }
 
 }
