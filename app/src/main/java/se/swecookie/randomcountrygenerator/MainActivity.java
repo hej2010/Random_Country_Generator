@@ -72,25 +72,22 @@ public class MainActivity extends AppCompatActivity {
         MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
 
         mAdView = (AdView) findViewById(R.id.adView);
-        //AdRequest adRequest = new AdRequest.Builder().build();
-        //mAdView.loadAd(adRequest);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
-        // TODO Use above when releasing app!
-        AdRequest request = new AdRequest.Builder().addTestDevice("431A0280FBBC1A69FBA40D653A0CB393").build();
-        mAdView.loadAd(request);
-
-        if (!checkIfAceptedPP()) {
-            displayPrivacyPolicyNotification();
-        }
+        // För testning
+        //AdRequest request = new AdRequest.Builder().addTestDevice("-").build();
+        //mAdView.loadAd(request);
     }
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnRandom:
-                btnRandom.setEnabled(false);
-                btnOpen.setEnabled(false);
-                startLoop();
-                sendToFirebase("Clicked Random");
+                if (!checkIfAceptedPP()) {
+                    displayPrivacyPolicyNotification();
+                } else {
+                    onNewCountryClicked();
+                }
                 break;
             case R.id.btnOpen:
                 if (checkConnection()) {
@@ -109,15 +106,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void onNewCountryClicked() {
+        btnRandom.setEnabled(false);
+        btnOpen.setEnabled(false);
+        startLoop();
+        sendToFirebase("Clicked Random");
+    }
+
     private boolean checkIfAceptedPP() {
         SharedPreferences prefs = getSharedPreferences("accepted", MODE_PRIVATE);
         return prefs.getBoolean("acceptedPP", false);
     }
 
-    private void setAcceptedPP() {
+    private void setAcceptedPP(boolean accepted) {
         SharedPreferences.Editor editor = getSharedPreferences("accepted", MODE_PRIVATE).edit();
-        editor.putBoolean("acceptedPP", true);
+        editor.putBoolean("acceptedPP", accepted);
         editor.apply();
+        if (accepted) {
+            onNewCountryClicked();
+        }
     }
 
     private void displayPrivacyPolicyNotification() {
@@ -127,12 +134,13 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                setAcceptedPP();
+                setAcceptedPP(true);
             }
         });
         builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                setAcceptedPP(false);
                 finish();
             }
         });
@@ -152,10 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Ta bort test ads och lägg till riktiga innan lansering (i activity_main.xml)
-     * http://www.iubenda.com/blog/privacy-policy-admob/
-     * https://support.google.com/admob/answer/48182?hl=en&ref_topic=2745287
-     * https://support.google.com/adsense/answer/1348695
-     * https://support.google.com/admob/answer/2753860
      */
 
     private void sendToFirebase(String s) {
@@ -327,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!checkIfAceptedPP() && !privacyBuilder.isShowing()) {
+        if (privacyBuilder != null && !checkIfAceptedPP() && !privacyBuilder.isShowing()) {
             displayPrivacyPolicyNotification();
         }
     }

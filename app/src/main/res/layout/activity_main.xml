@@ -84,6 +84,7 @@
         android:layout_gravity="bottom"
         android:visibility="visible"
         ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+        ads:adUnitId="ca-app-pub-2831297200743176/5912237242" />
     <!--RIKTIGA (egen): ca-app-pub-2831297200743176/5912237242-->
+    <!--TESTING: ca-app-pub-3940256099942544/6300978111-->
 </RelativeLayout>
