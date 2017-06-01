@@ -54,6 +54,15 @@
                 android:text="@string/main_generate" />
 
             <Button
+                android:id="@+id/btnSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@android:color/holo_blue_light"
+                android:onClick="onButtonClicked"
+                android:text="@string/main_settings" />
+
+            <Button
                 android:id="@+id/btnOpen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

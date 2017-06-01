@@ -36,7 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ImageView imgCountry;
     private TextView txtCountryName;
-    private Button btnRandom, btnOpen;
+    private Button btnRandom, btnOpen, btnSettings;
     private AdView mAdView;
 
     private List<String> countryList;
@@ -50,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
     private AlertDialog privacyBuilder;
 
+    private final CharSequence continents[] = new CharSequence[]{"All continents", "Africa", "Antarctica", "Asia", "Europe", "Nort America", "Oceania", "South America"};
+
+    private String selectedContinent = "All continents";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         imgCountry = (ImageView) findViewById(R.id.imgCountryFlag);
         txtCountryName = (TextView) findViewById(R.id.txtCountryName);
         btnRandom = (Button) findViewById(R.id.btnRandom);
+        btnSettings = (Button) findViewById(R.id.btnSettings);
         btnOpen = (Button) findViewById(R.id.btnOpen);
         btnOpen.setVisibility(View.GONE);
 
@@ -75,10 +80,9 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
-        // För testning
-        //AdRequest request = new AdRequest.Builder().addTestDevice("-").build();
-        //mAdView.loadAd(request);
     }
+
+    // TODO gör så att listan bara har länder från kontinenten man väljer
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
@@ -103,12 +107,29 @@ public class MainActivity extends AppCompatActivity {
             case R.id.txtAbout:
                 showAbout();
                 break;
+            case R.id.btnSettings:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Pick a continent");
+                builder.setItems(continents, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onSelectContinent(continents[which]);
+                    }
+                });
+                builder.show();
+                break;
         }
+    }
+
+    private void onSelectContinent(CharSequence continent) {
+        selectedContinent = continent.toString();
+        btnSettings.setText(selectedContinent);
     }
 
     private void onNewCountryClicked() {
         btnRandom.setEnabled(false);
         btnOpen.setEnabled(false);
+        btnSettings.setEnabled(false);
         startLoop();
         sendToFirebase("Clicked Random");
     }
@@ -228,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
         btnRandom.setEnabled(true);
         btnOpen.setVisibility(View.VISIBLE);
         btnOpen.setEnabled(true);
+        btnSettings.setEnabled(true);
     }
 
     private void randomCountry() {
