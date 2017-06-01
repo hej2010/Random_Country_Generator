@@ -322,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
      * @throws IOException if file not found
      */
     private String getCountriesAsString(final String continentShort) throws IOException {
-        Log.e("cont", continentShort);
         InputStream xml = null;
         try {
             xml = getAssets().open("countries.xml");
@@ -338,12 +337,8 @@ public class MainActivity extends AppCompatActivity {
             if (line.contains("code")) {
                 if (continentShort.equals("All")) {
                     total.append(line).append('\n');
-                    Log.e("appended All", line);
-                } else {
-                    if (line.contains("continent=\"" + continentShort + "\"")) {
-                        total.append(line).append('\n');
-                        Log.e("appended", continentShort + " " + line);
-                    }
+                } else if (line.contains("continent=\"" + continentShort + "\"")) {
+                    total.append(line).append('\n');
                 }
             }
         }
