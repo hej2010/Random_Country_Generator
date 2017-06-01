@@ -50,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
     private AlertDialog privacyBuilder;
 
-    private final CharSequence continents[] = new CharSequence[]{"All continents", "Africa", "Antarctica", "Asia", "Europe", "Nort America", "Oceania", "South America"};
+    private final CharSequence continents[] = new CharSequence[]{"All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
 
     private String selectedContinent = "All continents";
+    private boolean continentChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
         mAdView.loadAd(adRequest);
 
     }
-
-    // TODO gör så att listan bara har länder från kontinenten man väljer
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
@@ -124,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
     private void onSelectContinent(CharSequence continent) {
         selectedContinent = continent.toString();
         btnSettings.setText(selectedContinent);
+        continentChanged = true;
     }
 
     private void onNewCountryClicked() {
@@ -253,10 +253,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void randomCountry() {
-        if (countryList.size() == 0) {
+        if (countryList.size() == 0 || continentChanged) {
+            countryList.clear();
+            continentChanged = false;
             String c = null;
             try {
-                c = getCountriesAsString();
+                c = getCountriesAsString(getContinentShort());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -265,16 +267,13 @@ public class MainActivity extends AppCompatActivity {
             String[] countries = c.split("\n");
 
             Collections.addAll(countryList, countries);
-            // Delete first and last "<countries>"
-            countryList.remove(countryList.size() - 1);
-            countryList.remove(0);
         }
 
         showRandomCountry();
     }
 
     private void showRandomCountry() {
-        int random = (int) (Math.random() * (countryList.size() - 1));
+        int random = (int) (Math.random() * (countryList.size()));
 
         final String country = countryList.get(random);
         String s = country.split(">")[1];
@@ -289,6 +288,12 @@ public class MainActivity extends AppCompatActivity {
 
         final String countryName = sb.toString();
         final String countryCode = country.split("\"")[1];
+
+        // to not get the same two times in a row
+        if (countryName.equals(txtCountryName.toString())) {
+            showRandomCountry();
+            return;
+        }
 
         setLayout(countryName, countryCode);
     }
@@ -316,7 +321,8 @@ public class MainActivity extends AppCompatActivity {
      * @return list of countries
      * @throws IOException if file not found
      */
-    private String getCountriesAsString() throws IOException {
+    private String getCountriesAsString(final String continentShort) throws IOException {
+        Log.e("cont", continentShort);
         InputStream xml = null;
         try {
             xml = getAssets().open("countries.xml");
@@ -329,7 +335,17 @@ public class MainActivity extends AppCompatActivity {
         StringBuilder total = new StringBuilder();
         String line;
         while ((line = r.readLine()) != null) {
-            total.append(line).append('\n');
+            if (line.contains("code")) {
+                if (continentShort.equals("All")) {
+                    total.append(line).append('\n');
+                    Log.e("appended All", line);
+                } else {
+                    if (line.contains("continent=\"" + continentShort + "\"")) {
+                        total.append(line).append('\n');
+                        Log.e("appended", continentShort + " " + line);
+                    }
+                }
+            }
         }
 
         return total.toString();
@@ -358,4 +374,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public String getContinentShort() {
+        // "All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"
+        switch (selectedContinent) {
+            case "All continents":
+                return "All";
+            case "Africa":
+                return "AF";
+            case "Antarctica":
+                return "AN";
+            case "Asia":
+                return "AS";
+            case "Europe":
+                return "EU";
+            case "North America":
+                return "NA";
+            case "Oceania":
+                return "OC";
+            case "South America":
+                return "SA";
+        }
+        return "";
+    }
 }
