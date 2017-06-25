@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtCountryName;
     private Button btnRandom, btnOpen, btnSettings;
     private AdView mAdView;
+    private CheckBox cBEnableAnimations;
 
     private List<String> countryList;
 
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int delayOrigin = 20;
     private static final int maxDelay = 800;
     private static final double exponentialBase = 1.2;
+    private static final String preferenceName = "settings";
+    private static final String cBPreferenceName = "checked";
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -75,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
         btnSettings = (Button) findViewById(R.id.btnSettings);
         btnOpen = (Button) findViewById(R.id.btnOpen);
         btnOpen.setVisibility(View.GONE);
+        cBEnableAnimations = (CheckBox) findViewById(R.id.cBEnableAnimations);
+
+        if (isAnimationsEnabled()) {
+            cBEnableAnimations.setChecked(true);
+        } else {
+            cBEnableAnimations.setChecked(false);
+        }
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -122,7 +133,21 @@ public class MainActivity extends AppCompatActivity {
                 });
                 builder.show();
                 break;
+            case R.id.cBEnableAnimations:
+                saveNewCheckBoxState(cBEnableAnimations.isChecked());
+                break;
         }
+    }
+
+    private boolean isAnimationsEnabled() {
+        SharedPreferences prefs = getSharedPreferences(preferenceName, MODE_PRIVATE);
+        return prefs.getBoolean(cBPreferenceName, true);
+    }
+
+    private void saveNewCheckBoxState(boolean checked) {
+        SharedPreferences.Editor editor = getSharedPreferences(preferenceName, MODE_PRIVATE).edit();
+        editor.putBoolean(cBPreferenceName, checked);
+        editor.apply();
     }
 
     private void onSelectContinent(CharSequence continent) {
@@ -132,10 +157,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onNewCountryClicked() {
-        btnRandom.setEnabled(false);
-        btnOpen.setEnabled(false);
-        btnSettings.setEnabled(false);
-        startLoop();
+        if (isAnimationsEnabled()) {
+            btnRandom.setEnabled(false);
+            btnOpen.setEnabled(false);
+            btnSettings.setEnabled(false);
+            startLoop();
+        } else {
+            onLoopStopped();
+            randomCountry();
+        }
         sendToFirebase("Clicked Random");
     }
 
@@ -255,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void randomCountry() {
+        mp.start();
         if (countryList.isEmpty() || continentChanged) {
             countryList.clear();
             continentChanged = false;

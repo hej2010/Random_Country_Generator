@@ -71,6 +71,23 @@
                 android:onClick="onButtonClicked"
                 android:text="@string/main_open" />
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <CheckBox
+                    android:id="@+id/cBEnableAnimations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="@string/main_enable_spinning"
+                    android:textColor="@android:color/white"
+                    android:onClick="onButtonClicked"
+                    android:theme="@style/MyCheckBox"/>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/txtAbout"
                 android:layout_width="match_parent"

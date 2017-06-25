@@ -8,6 +8,7 @@
     <string name="main_settings">All continents</string>
     <string name="main_open">View country in Google Maps</string>
     <string name="main_about">About</string>
-    <string name="main_about_message" translatable="false">2017 © Rikard Teodorsson\nVersion 1.2.0</string>
+    <string name="main_about_message" translatable="false">2017 © Rikard Teodorsson\nVersion 1.2.1</string>
     <string name="main_privacy_policy_message">By using the app, you agree to the privacy policy and the usage of third-party cookies.</string>
+    <string name="main_enable_spinning">Enable animations</string>
 </resources>
