@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private List<String> countryList;
 
     private int delayInMillis = delayOrigin;
+    private int exponentialValue = exponentialValueOrigin;
+    private static final int exponentialValueOrigin = -2;
     private static final int delayOrigin = 20;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -227,13 +229,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 mp.start();
                 randomCountry();
-                if (delayInMillis < 150) {
-                    delayInMillis += 5;
-                } else if (delayInMillis < 400) {
-                    delayInMillis += 80;
-                } else if (delayInMillis < 800) {
-                    delayInMillis += 130;
-                }
+
+                delayInMillis += Math.pow(1.2, exponentialValue++);
+
                 if (delayInMillis >= 800) {
                     onLoopStopped();
                     ha.removeCallbacks(this);
@@ -245,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onLoopStopped() {
+        exponentialValue = exponentialValueOrigin;
         delayInMillis = delayOrigin;
         btnRandom.setEnabled(true);
         btnOpen.setVisibility(View.VISIBLE);
