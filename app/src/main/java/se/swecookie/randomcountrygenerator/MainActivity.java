@@ -43,8 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
     private int delayInMillis = delayOrigin;
     private int exponentialValue = exponentialValueOrigin;
+
     private static final int exponentialValueOrigin = -2;
     private static final int delayOrigin = 20;
+    private static final int maxDelay = 800;
+    private static final double exponentialBase = 1.2;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -230,9 +233,9 @@ public class MainActivity extends AppCompatActivity {
                 mp.start();
                 randomCountry();
 
-                delayInMillis += Math.pow(1.2, exponentialValue++);
+                delayInMillis += Math.pow(exponentialBase, exponentialValue++);
 
-                if (delayInMillis >= 800) {
+                if (delayInMillis >= maxDelay) {
                     onLoopStopped();
                     ha.removeCallbacks(this);
                 } else {
@@ -252,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void randomCountry() {
-        if (countryList.size() == 0 || continentChanged) {
+        if (countryList.isEmpty() || continentChanged) {
             countryList.clear();
             continentChanged = false;
             String c = null;
