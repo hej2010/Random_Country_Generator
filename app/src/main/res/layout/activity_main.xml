@@ -83,7 +83,6 @@
                     android:checked="true"
                     android:gravity="center"
                     android:text="@string/main_enable_spinning"
-                    android:textColor="@android:color/white"
                     android:onClick="onButtonClicked"
                     android:theme="@style/MyCheckBox"/>
             </LinearLayout>
