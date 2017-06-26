@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         countryList = new ArrayList<>();
 
-        mp = MediaPlayer.create(this, R.raw.blip);
+        mp = MediaPlayer.create(this, R.raw.blip_short);
 
         imgCountry = (ImageView) findViewById(R.id.imgCountryFlag);
         txtCountryName = (TextView) findViewById(R.id.txtCountryName);
