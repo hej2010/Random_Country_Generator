@@ -5,13 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static final double exponentialBase = 1.2;
     private static final String preferenceName = "settings";
     private static final String cBPreferenceName = "checked";
+    private static final String PATH = "se.swecookie.randomcountrygenerator";
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -73,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
         mp = MediaPlayer.create(this, R.raw.blip_short);
 
-        imgCountry = (ImageView) findViewById(R.id.imgCountryFlag);
-        txtCountryName = (TextView) findViewById(R.id.txtCountryName);
-        btnRandom = (Button) findViewById(R.id.btnRandom);
-        btnSettings = (Button) findViewById(R.id.btnSettings);
-        btnOpen = (Button) findViewById(R.id.btnOpen);
+        imgCountry = findViewById(R.id.imgCountryFlag);
+        txtCountryName = findViewById(R.id.txtCountryName);
+        btnRandom = findViewById(R.id.btnRandom);
+        btnSettings = findViewById(R.id.btnSettings);
+        btnOpen = findViewById(R.id.btnOpen);
         btnOpen.setVisibility(View.GONE);
-        cBEnableAnimations = (CheckBox) findViewById(R.id.cBEnableAnimations);
+        cBEnableAnimations = findViewById(R.id.cBEnableAnimations);
 
         if (isAnimationsEnabled()) {
             cBEnableAnimations.setChecked(true);
@@ -93,10 +93,9 @@ public class MainActivity extends AppCompatActivity {
         // Sample AdMob app ID: ca-app-pub-xxxxxxxxxxxxxxxxxxxxxxxxxxx
         MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
 
-        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-
     }
 
     public void onButtonClicked(View view) {
@@ -214,10 +213,6 @@ public class MainActivity extends AppCompatActivity {
         privacyBuilder.show();
     }
 
-    /**
-     * Ta bort test ads och lägg till riktiga innan lansering (i activity_main.xml)
-     */
-
     private void sendToFirebase(String s) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, s);
@@ -240,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    void showConnectionError() { // If no connection
+    private void showConnectionError() { // If no connection
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Device offline");
         builder.setMessage("Internet connection required! Please enable it and retry.");
@@ -337,14 +332,9 @@ public class MainActivity extends AppCompatActivity {
             countryCode = "do1";
         }
         txtCountryName.setText(countryName);
-        try {
-            imgCountry.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, getResources().
-                    getIdentifier(countryCode.toLowerCase(), "drawable", "se.swecookie.randomcountrygenerator")));
-        } catch (Resources.NotFoundException e) {
-            // Set default image
-            Log.e("error", "Couldn't find " + countryName);
-            imgCountry.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.mipmap.ikon));
-        }
+
+        imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), getResources().
+                getIdentifier(countryCode.toLowerCase(), "drawable", PATH)));
 
     }
 
@@ -402,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String getContinentShort() {
+    private String getContinentShort() {
         // "All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"
         switch (selectedContinent) {
             case "All continents":
