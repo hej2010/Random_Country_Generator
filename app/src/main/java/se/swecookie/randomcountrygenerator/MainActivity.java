@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean notAcceptedPP() {
         SharedPreferences prefs = getSharedPreferences("accepted", MODE_PRIVATE);
-        return prefs.getBoolean("notAcceptedPP", false);
+        return !prefs.getBoolean("notAcceptedPP", false);
     }
 
     private void setAcceptedPP(boolean accepted) {
