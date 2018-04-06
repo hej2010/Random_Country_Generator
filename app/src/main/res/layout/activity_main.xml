@@ -82,10 +82,20 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:gravity="center"
-                    android:text="@string/main_enable_spinning"
                     android:onClick="onButtonClicked"
-                    android:theme="@style/MyCheckBox"/>
+                    android:text="@string/main_enable_spinning"
+                    android:theme="@style/MyCheckBox" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtCountryList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:onClick="onButtonClicked"
+                android:text="@string/main_country_list"
+                android:textAlignment="center"
+                android:textColor="@color/colorCountryList" />
 
             <TextView
                 android:id="@+id/txtAbout"
@@ -100,8 +110,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"/>
-
+                android:layout_marginTop="60dp" />
 
         </LinearLayout>
 

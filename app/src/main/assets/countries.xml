@@ -1,6 +1,6 @@
 <countries>
   <country code="AF" iso="4" continent="AS">Afghanistan</country>
-  <country code="AL" iso="8" continent="AS">Albania</country>
+  <country code="AL" iso="8" continent="EU">Albania</country>
   <country code="DZ" iso="12" continent="AF">Algeria</country>
   <country code="AS" iso="16" continent="OC">American Samoa</country>
   <country code="AD" iso="20" continent="EU">Andorra</country>

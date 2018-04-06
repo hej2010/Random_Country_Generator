@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,17 +31,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView imgCountry;
     private TextView txtCountryName;
     private Button btnRandom, btnOpen, btnSettings;
-    private AdView mAdView;
     private CheckBox cBEnableAnimations;
 
-    private List<String> countryList;
+    private List<Country> countryList;
+    private List<Country> currentList;
 
     private int delayInMillis = delayOrigin;
     private int exponentialValue = exponentialValueOrigin;
@@ -61,15 +61,10 @@ public class MainActivity extends AppCompatActivity {
 
     private final CharSequence continents[] = new CharSequence[]{"All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
 
-    private String selectedContinent = "All continents";
-    private boolean continentChanged = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        countryList = new ArrayList<>();
 
         mp = MediaPlayer.create(this, R.raw.blip_short);
 
@@ -93,15 +88,19 @@ public class MainActivity extends AppCompatActivity {
         // Sample AdMob app ID: ca-app-pub-xxxxxxxxxxxxxxxxxxxxxxxxxxx
         MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
 
-        mAdView = findViewById(R.id.adView);
+        AdView mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+        countryList = getCountriesAsList();
+        currentList = new ArrayList<>();
+        onSelectContinent(continents[0]);
     }
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnRandom:
-                if (!checkIfAceptedPP()) {
+                if (notAcceptedPP()) {
                     displayPrivacyPolicyNotification();
                 } else {
                     onNewCountryClicked();
@@ -111,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 if (checkConnection()) {
                     sendToFirebase("Clicked Open");
                     Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + txtCountryName.getText().toString().replace(" ", "+"));
-                    Log.e("uri", uri.toString());
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                 } else {
@@ -135,7 +133,34 @@ public class MainActivity extends AppCompatActivity {
             case R.id.cBEnableAnimations:
                 saveNewCheckBoxState(cBEnableAnimations.isChecked());
                 break;
+            case R.id.txtCountryList:
+                showCountryList();
+                break;
         }
+    }
+
+    private void showCountryList() {
+        StringBuilder sb = new StringBuilder();
+        for (Country c : countryList) {
+            sb.append(c.getName())
+                    .append(", ")
+                    .append(getContinentLong(c.getContinent()))
+                    .append(", ")
+                    .append(c.getCode())
+                    .append("\n\n");
+        }
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.country_list, null);
+
+        TextView textview = view.findViewById(R.id.txtList);
+        textview.setText(sb.toString().trim());
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("All countries and islands");
+        alertDialog.setView(view);
+        alertDialog.setPositiveButton("Close", null);
+        AlertDialog alert = alertDialog.create();
+        alert.show();
     }
 
     private boolean isAnimationsEnabled() {
@@ -150,9 +175,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSelectContinent(CharSequence continent) {
-        selectedContinent = continent.toString();
-        btnSettings.setText(selectedContinent);
-        continentChanged = true;
+        String selectedShort = getContinentShort(continent.toString());
+        Log.e("selected", "continent: " + selectedShort);
+        btnSettings.setText(continent.toString());
+        currentList.clear();
+        if (selectedShort.equals("All")) {
+            currentList.addAll(countryList);
+        } else {
+            for (Country c : countryList) {
+                if (c.getContinent().equals(selectedShort)) {
+                    Log.e("add", "country " + c.getName() + " to currentList");
+                    currentList.add(c);
+                }
+            }
+        }
     }
 
     private void onNewCountryClicked() {
@@ -163,19 +199,19 @@ public class MainActivity extends AppCompatActivity {
             startLoop();
         } else {
             onLoopStopped();
-            randomCountry();
+            showRandomCountry();
         }
         sendToFirebase("Clicked Random");
     }
 
-    private boolean checkIfAceptedPP() {
+    private boolean notAcceptedPP() {
         SharedPreferences prefs = getSharedPreferences("accepted", MODE_PRIVATE);
-        return prefs.getBoolean("acceptedPP", false);
+        return prefs.getBoolean("notAcceptedPP", false);
     }
 
     private void setAcceptedPP(boolean accepted) {
         SharedPreferences.Editor editor = getSharedPreferences("accepted", MODE_PRIVATE).edit();
-        editor.putBoolean("acceptedPP", accepted);
+        editor.putBoolean("notAcceptedPP", accepted);
         editor.apply();
         if (accepted) {
             onNewCountryClicked();
@@ -256,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mp.start();
-                randomCountry();
+                showRandomCountry();
 
                 delayInMillis += Math.pow(exponentialBase, exponentialValue++);
 
@@ -279,51 +315,19 @@ public class MainActivity extends AppCompatActivity {
         btnSettings.setEnabled(true);
     }
 
-    private void randomCountry() {
-        mp.start();
-        if (countryList.isEmpty() || continentChanged) {
-            countryList.clear();
-            continentChanged = false;
-            String c = null;
-            try {
-                c = getCountriesAsString(getContinentShort());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            assert c != null;
-            String[] countries = c.split("\n");
-
-            Collections.addAll(countryList, countries);
-        }
-
-        showRandomCountry();
-    }
-
     private void showRandomCountry() {
-        int random = (int) (Math.random() * (countryList.size()));
+        mp.start();
+        int random = (int) (Math.random() * (currentList.size()));
 
-        final String country = countryList.get(random);
-        String s = country.split(">")[1];
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) != '<') {
-                sb.append(s.charAt(i));
-            } else {
-                break;
-            }
-        }
-
-        final String countryName = sb.toString();
-        final String countryCode = country.split("\"")[1];
+        final Country country = currentList.get(random);
 
         // to not get the same two times in a row
-        if (countryName.equals(txtCountryName.toString())) {
+        if (country.getName().equals(txtCountryName.getText().toString())) {
             showRandomCountry();
             return;
         }
 
-        setLayout(countryName, countryCode);
+        setLayout(country.getName(), country.getCode());
     }
 
     private void setLayout(String countryName, String countryCode) {
@@ -338,61 +342,43 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Reads xml file and returns it as a string
-     *
-     * @return list of countries
-     * @throws IOException if file not found
-     */
-    private String getCountriesAsString(final String continentShort) throws IOException {
-        InputStream xml = null;
-        try {
-            xml = getAssets().open("countries.xml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        assert xml != null;
-        BufferedReader r = new BufferedReader(new InputStreamReader(xml));
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            if (line.contains("code")) {
-                if (continentShort.equals("All")) {
-                    total.append(line).append('\n');
-                } else if (line.contains("continent=\"" + continentShort + "\"")) {
-                    total.append(line).append('\n');
-                }
-            }
-        }
-
-        return total.toString();
-    }
-
     private boolean checkConnection() { //Kolla om man har anslutning till internet
         ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null) { // connected to the internet
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                return true;
-            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
+        // connected to the internet
+        return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (privacyBuilder != null && !checkIfAceptedPP() && !privacyBuilder.isShowing()) {
+        if (privacyBuilder != null && notAcceptedPP() && !privacyBuilder.isShowing()) {
             displayPrivacyPolicyNotification();
         }
     }
 
-    private String getContinentShort() {
+    private ArrayList<Country> getCountriesAsList() {
+        ArrayList<Country> countries = new ArrayList<>();
+        InputStream xml;
+        try {
+            xml = getAssets().open("countries.xml");
+            BufferedReader r = new BufferedReader(new InputStreamReader(xml));
+
+            String line;
+            while ((line = r.readLine()) != null) {
+                if (line.contains("code")) {
+                    countries.add(Country.stringToCountry(line));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return countries;
+    }
+
+    private String getContinentShort(String selectedContinent) {
         // "All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"
         switch (selectedContinent) {
             case "All continents":
@@ -414,4 +400,27 @@ public class MainActivity extends AppCompatActivity {
         }
         return "";
     }
+
+    private String getContinentLong(String selectedContinent) {
+        switch (selectedContinent) {
+            case "All":
+                return "All continents";
+            case "AF":
+                return "Africa";
+            case "AN":
+                return "Antarctica";
+            case "AS":
+                return "Asia";
+            case "EU":
+                return "Europe";
+            case "NA":
+                return "North America";
+            case "OC":
+                return "Oceania";
+            case "SA":
+                return "South America";
+        }
+        return "";
+    }
+
 }
