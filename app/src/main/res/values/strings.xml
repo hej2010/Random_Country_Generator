@@ -5,12 +5,12 @@
     <string name="main_desc">Country flag</string>
     <string name="main_help">Press the button to select a random country</string>
     <string name="main_generate">New country</string>
-    <string name="main_settings">All continents</string>
+    <string name="main_settings">Continent: %1$s</string>
     <string name="main_open">View country in Google Maps</string>
     <string name="main_about">About</string>
     <string name="main_country_list">Country list</string>
-    <string name="main_country_list_title">Name, Continent, Code</string>
-    <string name="main_about_message" translatable="false">2018 © Rikard Teodorsson\nVersion 1.4</string>
+    <string name="main_country_list_title">Name, Continent, Alpha&#8211;2 ISO code</string>
+    <string name="main_about_message" translatable="false">2018 © Rikard Teodorsson\nVersion 1.5</string>
     <string name="main_privacy_policy_message">By using the app, you agree to the privacy policy and the usage of third-party cookies.</string>
     <string name="main_enable_spinning">Enable spinning animation</string>
 </resources>

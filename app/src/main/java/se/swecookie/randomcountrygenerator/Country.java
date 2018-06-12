@@ -35,7 +35,7 @@ class Country {
     static Country stringToCountry(@NonNull String xml) {
         // <country code="AL" iso="8" continent="EU">Albania</country>
         String name = xml.split(">")[1].split("<")[0];
-        String continent = xml.split("\"")[5];
+        String continent = xml.split("\"")[3];
         String code = xml.split("\"")[1];
         return new Country(name, continent, code);
     }
