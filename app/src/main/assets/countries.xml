@@ -105,10 +105,12 @@
     <country code="IR" continent="AS">Islamic Republic Of Iran</country>
     <country code="IQ" continent="AS">Iraq</country>
     <country code="IE" continent="EU">Ireland</country>
+    <country code="IM" continent="EU">Isle of Man</country>
     <country code="IL" continent="AS">Israel</country>
     <country code="IT" continent="EU">Italy</country>
     <country code="JM" continent="NA">Jamaica</country>
     <country code="JP" continent="AS">Japan</country>
+    <country code="JE" continent="EU">Jersey</country>
     <country code="JO" continent="AS">Jordan</country>
     <country code="KZ" continent="AS">Kazakhstan</country>
     <country code="KE" continent="AF">Kenya</country>
@@ -122,11 +124,11 @@
     <country code="LB" continent="AS">Lebanon</country>
     <country code="LS" continent="AF">Lesotho</country>
     <country code="LR" continent="AF">Liberia</country>
-    <country code="LY" continent="AF">Libyan Arab Jamahiriya</country>
+    <country code="LY" continent="AF">Libya</country>
     <country code="LI" continent="EU">Liechtenstein</country>
     <country code="LT" continent="EU">Lithuania</country>
     <country code="LU" continent="EU">Luxembourg</country>
-    <country code="MO" continent="AS">Macau</country>
+    <country code="MO" continent="AS">Macao</country>
     <country code="MK" continent="EU">The Former Yugoslav Republic Of Macedonia</country>
     <country code="MG" continent="AF">Madagascar</country>
     <country code="MW" continent="AF">Malawi</country>
@@ -144,6 +146,7 @@
     <country code="MD" continent="EU">Republic Of Moldova</country>
     <country code="MC" continent="EU">Monaco</country>
     <country code="MN" continent="AS">Mongolia</country>
+    <country code="ME" continent="EU">Montenegro</country>
     <country code="MS" continent="NA">Montserrat</country>
     <country code="MA" continent="AF">Morocco</country>
     <country code="MZ" continent="AF">Mozambique</country>
@@ -152,7 +155,6 @@
     <country code="NR" continent="OC">Nauru</country>
     <country code="NP" continent="AS">Nepal</country>
     <country code="NL" continent="EU">Netherlands</country>
-    <country code="AN" continent="EU">Netherlands Antilles</country>
     <country code="NC" continent="OC">New Caledonia</country>
     <country code="NZ" continent="OC">New Zealand</country>
     <country code="NI" continent="NA">Nicaragua</country>
@@ -175,13 +177,15 @@
     <country code="PT" continent="EU">Portugal</country>
     <country code="PR" continent="NA">Puerto Rico</country>
     <country code="QA" continent="AS">Qatar</country>
-    <country code="RE" continent="AF">Reunion</country>
+    <country code="RE" continent="AF">Réunion</country>
     <country code="RO" continent="EU">Romania</country>
     <country code="RU" continent="AS">Russian Federation</country>
     <country code="RW" continent="AF">Rwanda</country>
+    <country code="BL" continent="NA">Saint Barthélemy</country>
     <country code="SH" continent="AF">Saint Helena</country>
     <country code="KN" continent="NA">Saint Kitts And Nevis</country>
     <country code="LC" continent="NA">Saint Lucia</country>
+    <country code="MF" continent="NA">Saint Martin</country>
     <country code="PM" continent="NA">Saint Pierre And Miquelon</country>
     <country code="VC" continent="NA">Saint Vincent And The Grenadines</country>
     <country code="WS" continent="OC">Samoa</country>
@@ -189,14 +193,17 @@
     <country code="ST" continent="AF">Sao Tome And Principe</country>
     <country code="SA" continent="AS">Saudi Arabia</country>
     <country code="SN" continent="AF">Senegal</country>
+    <country code="RS" continent="EU">Serbia</country>
     <country code="SC" continent="AF">Seychelles</country>
     <country code="SL" continent="AF">Sierra Leone</country>
     <country code="SG" continent="AS">Singapore</country>
-    <country code="SK" continent="EU">Slovakia (Slovak Republic)</country>
+    <country code="SK" continent="EU">Slovakia</country>
     <country code="SI" continent="EU">Slovenia</country>
     <country code="SB" continent="OC">Solomon Islands</country>
     <country code="SO" continent="AS">Somalia</country>
     <country code="ZA" continent="AF">South Africa</country>
+    <country code="GS" continent="SA">South Georgia and the South Sandwich Islands</country>
+    <country code="SS" continent="AF">South Sudan</country>
     <country code="ES" continent="EU">Spain</country>
     <country code="LK" continent="AS">Sri Lanka</country>
     <country code="SD" continent="AF">Sudan</country>
@@ -210,6 +217,7 @@
     <country code="TJ" continent="AS">Tajikistan</country>
     <country code="TZ" continent="AF">United Republic Of Tanzania</country>
     <country code="TH" continent="AS">Thailand</country>
+    <country code="TL" continent="OC">Timor-Leste</country>
     <country code="TG" continent="AF">Togo</country>
     <country code="TK" continent="OC">Tokelau</country>
     <country code="TO" continent="OC">Tonga</country>
@@ -228,7 +236,7 @@
     <country code="UY" continent="SA">Uruguay</country>
     <country code="UZ" continent="AS">Uzbekistan</country>
     <country code="VU" continent="OC">Vanuatu</country>
-    <country code="VA" continent="EU">Vatican City State (Holy See)</country>
+    <country code="VA" continent="EU">Vatican State (Holy See)</country>
     <country code="VE" continent="SA">Venezuela</country>
     <country code="VN" continent="AS">Vietnam</country>
     <country code="VG" continent="NA">Virgin Islands (British)</country>
@@ -236,8 +244,6 @@
     <country code="WF" continent="OC">Wallis And Futuna Islands</country>
     <country code="EH" continent="AF">Western Sahara</country>
     <country code="YE" continent="AS">Yemen</country>
-    <country code="YU" continent="EU">Yugoslavia</country>
-    <country code="ZR" continent="AF">Zaire</country>
     <country code="ZM" continent="AF">Zambia</country>
     <country code="ZW" continent="AF">Zimbabwe</country>
 </countries>
