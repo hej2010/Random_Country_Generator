@@ -4,7 +4,7 @@
     package="se.swecookie.randomcountrygenerator">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-permission
         android:name="android.permission.READ_PHONE_STATE"
         tools:node="remove" />
@@ -19,9 +19,6 @@
         tools:node="remove" />
     <uses-permission
         android:name="se.swecookie.randomcountrygenerator.permission.C2D_MESSAGE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.WAKE_LOCK"
         tools:node="remove" />
 
     <application

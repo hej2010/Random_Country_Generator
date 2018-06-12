@@ -10,9 +10,9 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AlertDialog privacyBuilder;
 
-    private final CharSequence continents[] = new CharSequence[]{"All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
+    private final CharSequence continents[] = new CharSequence[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     private void onSelectContinent(CharSequence continent) {
         String selectedShort = getContinentShort(continent.toString());
         Log.e("selected", "continent: " + selectedShort);
-        btnSettings.setText(continent.toString());
+        btnSettings.setText(getString(R.string.main_settings, continent.toString()));
         currentList.clear();
         if (selectedShort.equals("All")) {
             currentList.addAll(countryList);
@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
     private String getContinentShort(String selectedContinent) {
         // "All continents", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"
         switch (selectedContinent) {
-            case "All continents":
+            case "All":
                 return "All";
             case "Africa":
                 return "AF";
