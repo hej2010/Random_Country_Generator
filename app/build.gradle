@@ -6,8 +6,8 @@ android {
         applicationId "se.swecookie.randomcountrygenerator"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 11
-        versionName "1.5"
+        versionCode 12
+        versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
