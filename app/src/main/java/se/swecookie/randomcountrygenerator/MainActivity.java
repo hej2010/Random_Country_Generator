@@ -283,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
     private void startLoop() {
         final Handler ha = new Handler();
         ha.postDelayed(new Runnable() {
-
             @Override
             public void run() {
                 mp.start();
@@ -336,12 +335,21 @@ public class MainActivity extends AppCompatActivity {
                 getIdentifier(countryCode.toLowerCase(), "drawable", PATH)));
     }
 
-    private boolean checkConnection() { //Kolla om man har anslutning till internet
+    private boolean checkConnection() {
+        boolean connected = false;
         ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert cm != null;
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        // connected to the internet
-        return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
+        if (activeNetwork != null) {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                connected = true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                connected = true;
+            }
+        }
+        return connected;
     }
 
     @Override
