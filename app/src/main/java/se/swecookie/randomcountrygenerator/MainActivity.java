@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -82,10 +81,8 @@ public class MainActivity extends AppCompatActivity {
             cBEnableAnimations.setChecked(false);
         }
 
-        // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        // Sample AdMob app ID: ca-app-pub-xxxxxxxxxxxxxxxxxxxxxxxxxxx
         MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
 
         AdView mAdView = findViewById(R.id.adView);
@@ -176,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSelectContinent(CharSequence continent) {
         String selectedShort = getContinentShort(continent.toString());
-        Log.e("selected", "continent: " + selectedShort);
         btnSettings.setText(getString(R.string.main_settings, continent.toString()));
         currentList.clear();
         if (selectedShort.equals("All")) {
@@ -184,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             for (Country c : countryList) {
                 if (c.getContinent().equals(selectedShort)) {
-                    Log.e("add", "country " + c.getName() + " to currentList");
                     currentList.add(c);
                 }
             }
@@ -339,7 +334,6 @@ public class MainActivity extends AppCompatActivity {
 
         imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), getResources().
                 getIdentifier(countryCode.toLowerCase(), "drawable", PATH)));
-
     }
 
     private boolean checkConnection() { //Kolla om man har anslutning till internet

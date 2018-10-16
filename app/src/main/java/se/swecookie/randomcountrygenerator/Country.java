@@ -40,6 +40,7 @@ class Country {
         return new Country(name, continent, code);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name + ", " + continent + ", " + code;

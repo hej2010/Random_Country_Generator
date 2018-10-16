@@ -29,7 +29,11 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ikon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2831297200743176~3098371641" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize">
