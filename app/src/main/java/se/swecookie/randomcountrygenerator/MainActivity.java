@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
         mAdView.loadAd(adRequest);
 
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.setToolbarColor(getResources().getColor(R.color.colorDark));
+        builder.enableUrlBarHiding();
         customTabsIntent = builder.build();
 
         countryList = getCountriesAsList();
