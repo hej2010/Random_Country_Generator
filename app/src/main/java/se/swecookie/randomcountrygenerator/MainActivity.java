@@ -3,7 +3,6 @@ package se.swecookie.randomcountrygenerator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -55,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private static final double exponentialBase = 1.2;
     private static final String preferenceName = "settings";
     private static final String cBPreferenceName = "checked";
+    private static final String PREFS_NAME = "accepted";
+    private static final String PREFS_ITEM = "notAcceptedPP2";
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(getResources().getColor(R.color.colorDark));
         builder.enableUrlBarHiding();
+        builder.setShowTitle(true);
         customTabsIntent = builder.build();
 
         countryList = getCountriesAsList();
@@ -232,13 +234,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean notAcceptedPP() {
-        SharedPreferences prefs = getSharedPreferences("accepted", MODE_PRIVATE);
-        return !prefs.getBoolean("notAcceptedPP", false);
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return !prefs.getBoolean(PREFS_ITEM, false);
     }
 
     private void setAcceptedPP(boolean accepted) {
-        SharedPreferences.Editor editor = getSharedPreferences("accepted", MODE_PRIVATE).edit();
-        editor.putBoolean("notAcceptedPP", accepted);
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putBoolean(PREFS_ITEM, accepted);
         editor.apply();
         if (accepted) {
             onNewCountryClicked();
@@ -265,10 +267,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setNeutralButton("Read it", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                final String privacyPolicy = "https://www.swecookie.se/apps/privacy-policies/RCG-PP.pdf";
-                final Uri uri = Uri.parse("http://docs.google.com/gview?embedded=true&url=" + privacyPolicy);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
+                final Uri uri = Uri.parse("https://arctosoft.com/products/random-country-selector/privacy-policy/");
+                customTabsIntent.launchUrl(MainActivity.this, uri);
             }
         });
         builder.setCancelable(false);
@@ -292,6 +292,13 @@ public class MainActivity extends AppCompatActivity {
 
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+        builder.setNeutralButton("Privacy Policy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final Uri uri = Uri.parse("https://arctosoft.com/products/random-country-selector/privacy-policy/");
+                customTabsIntent.launchUrl(MainActivity.this, uri);
             }
         });
         AlertDialog alert = builder.create();
