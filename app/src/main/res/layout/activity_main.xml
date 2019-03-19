@@ -71,6 +71,15 @@
                 android:onClick="onButtonClicked"
                 android:text="@string/main_open" />
 
+            <Button
+                android:id="@+id/btnOpenWiki"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@android:color/holo_red_light"
+                android:onClick="onButtonClicked"
+                android:text="@string/main_open_wiki" />
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

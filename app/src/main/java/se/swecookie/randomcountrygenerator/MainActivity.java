@@ -6,12 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +37,17 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ImageView imgCountry;
     private TextView txtCountryName;
-    private Button btnRandom, btnOpen, btnSettings;
+    private Button btnRandom, btnOpen, btnSettings, btnOpenWiki;
     private CheckBox cBEnableAnimations;
 
     private List<Country> countryList;
     private List<Country> currentList;
 
+    private CustomTabsIntent customTabsIntent;
+
     private int delayInMillis = delayOrigin;
     private int exponentialValue = exponentialValueOrigin;
+    private AudioManager audioManager;
 
     private static final int exponentialValueOrigin = -2;
     private static final int delayOrigin = 20;
@@ -50,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
     private static final double exponentialBase = 1.2;
     private static final String preferenceName = "settings";
     private static final String cBPreferenceName = "checked";
-    private static final String PATH = "se.swecookie.randomcountrygenerator";
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
-    private MediaPlayer mp;
+    private SoundPool soundPool;
+    private int soundID;
+    private boolean loadedSound = false;
 
     private AlertDialog privacyBuilder;
 
@@ -65,7 +71,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mp = MediaPlayer.create(this, R.raw.blip_short);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int i, int i1) {
+                loadedSound = true;
+            }
+        });
+        soundID = soundPool.load(this, R.raw.blip_short, 1);
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         imgCountry = findViewById(R.id.imgCountryFlag);
         txtCountryName = findViewById(R.id.txtCountryName);
@@ -73,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         btnSettings = findViewById(R.id.btnSettings);
         btnOpen = findViewById(R.id.btnOpen);
         btnOpen.setVisibility(View.GONE);
+        btnOpenWiki = findViewById(R.id.btnOpenWiki);
+        btnOpenWiki.setVisibility(View.GONE);
         cBEnableAnimations = findViewById(R.id.cBEnableAnimations);
 
         if (isAnimationsEnabled()) {
@@ -88,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
         AdView mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        customTabsIntent = builder.build();
 
         countryList = getCountriesAsList();
         currentList = new ArrayList<>();
@@ -107,8 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 if (checkConnection()) {
                     sendToFirebase("Clicked Open");
                     Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + txtCountryName.getText().toString().replace(" ", "+"));
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
+                    customTabsIntent.launchUrl(this, uri);
                 } else {
                     showConnectionError();
                 }
@@ -132,6 +152,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.txtCountryList:
                 showCountryList();
+                break;
+            case R.id.btnOpenWiki:
+                if (checkConnection()) {
+                    sendToFirebase("Clicked Open Wiki");
+                    Uri uri = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + txtCountryName.getText().toString() + "&language=en&go=Go");
+                    customTabsIntent.launchUrl(this, uri);
+                } else {
+                    showConnectionError();
+                }
                 break;
         }
     }
@@ -190,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         if (isAnimationsEnabled()) {
             btnRandom.setEnabled(false);
             btnOpen.setEnabled(false);
+            btnOpenWiki.setEnabled(false);
             btnSettings.setEnabled(false);
             startLoop();
         } else {
@@ -285,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
         ha.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mp.start();
+                playSound();
                 showRandomCountry();
 
                 delayInMillis += Math.pow(exponentialBase, exponentialValue++);
@@ -300,17 +330,32 @@ public class MainActivity extends AppCompatActivity {
         }, delayInMillis);
     }
 
+    private void playSound() {
+        if (loadedSound) {
+            float volume = getVolume();
+            soundPool.play(soundID, volume, volume, 1, 0, 1f);
+        }
+    }
+
+    private float getVolume() {
+        float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        return actualVolume / maxVolume;
+    }
+
     private void onLoopStopped() {
         exponentialValue = exponentialValueOrigin;
         delayInMillis = delayOrigin;
         btnRandom.setEnabled(true);
         btnOpen.setVisibility(View.VISIBLE);
         btnOpen.setEnabled(true);
+        btnOpenWiki.setVisibility(View.VISIBLE);
+        btnOpenWiki.setEnabled(true);
         btnSettings.setEnabled(true);
     }
 
     private void showRandomCountry() {
-        mp.start();
+        playSound();
         int random = (int) (Math.random() * (currentList.size()));
 
         final Country country = currentList.get(random);
@@ -332,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
         txtCountryName.setText(countryName);
 
         imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), getResources().
-                getIdentifier(countryCode.toLowerCase(), "drawable", PATH)));
+                getIdentifier(countryCode.toLowerCase(), "drawable", BuildConfig.APPLICATION_ID)));
     }
 
     private boolean checkConnection() {
