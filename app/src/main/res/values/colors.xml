@@ -7,4 +7,7 @@
     <color name="colorText">#e7e7e7</color>
     <color name="colorAbout">#375345</color>
     <color name="colorCountryList">#557967</color>
+    <color name="colorRed">#E60E0E</color>
+    <color name="colorPrivacyBG">#072C19</color>
+    <color name="colorPrivacyBGDarker">#11251b</color>
 </resources>

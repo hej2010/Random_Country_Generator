@@ -21,10 +21,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/contry_list_dim"
-            android:layout_marginLeft="@dimen/contry_list_dim"
-            android:layout_marginRight="@dimen/contry_list_dim"
-            android:layout_marginStart="@dimen/contry_list_dim"
+            android:layout_marginEnd="@dimen/country_list_dim"
+            android:layout_marginLeft="@dimen/country_list_dim"
+            android:layout_marginRight="@dimen/country_list_dim"
+            android:layout_marginStart="@dimen/country_list_dim"
             android:orientation="vertical">
 
             <TextView

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="contry_list_dim">10dp</dimen>
+    <dimen name="country_list_dim">10dp</dimen>
+    <dimen name="pp_title_size">24sp</dimen>
+    <dimen name="pp_margin">8dp</dimen>
 </resources>

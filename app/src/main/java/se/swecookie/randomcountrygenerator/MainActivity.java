@@ -3,7 +3,7 @@ package se.swecookie.randomcountrygenerator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -12,8 +12,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,10 +19,13 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
+
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,20 +53,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int delayOrigin = 20;
     private static final int maxDelay = 800;
     private static final double exponentialBase = 1.2;
-    private static final String preferenceName = "settings";
-    private static final String cBPreferenceName = "checked";
-    private static final String PREFS_NAME = "accepted";
-    private static final String PREFS_ITEM = "notAcceptedPP2";
-
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     private SoundPool soundPool;
     private int soundID;
     private boolean loadedSound = false;
+    private Preferences preferences;
 
-    private AlertDialog privacyBuilder;
-
-    private final CharSequence continents[] = new CharSequence[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
+    private final CharSequence[] continents = new CharSequence[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         });
         soundID = soundPool.load(this, R.raw.blip_short, 1);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        preferences = new Preferences(this);
 
         imgCountry = findViewById(R.id.imgCountryFlag);
         txtCountryName = findViewById(R.id.txtCountryName);
@@ -94,19 +89,11 @@ public class MainActivity extends AppCompatActivity {
         btnOpenWiki.setVisibility(View.GONE);
         cBEnableAnimations = findViewById(R.id.cBEnableAnimations);
 
-        if (isAnimationsEnabled()) {
+        if (preferences.isAnimationsEnabled()) {
             cBEnableAnimations.setChecked(true);
         } else {
             cBEnableAnimations.setChecked(false);
         }
-
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
-        MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
-
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
 
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(getResources().getColor(R.color.colorDark));
@@ -117,20 +104,30 @@ public class MainActivity extends AppCompatActivity {
         countryList = getCountriesAsList();
         currentList = new ArrayList<>();
         onSelectContinent(continents[0]);
+
+        loadAds();
+    }
+
+    private void loadAds() {
+        MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
+
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest.Builder adRequest = new AdRequest.Builder();
+
+        Bundle extras = new Bundle();
+        extras.putBoolean("tag_for_under_age_of_consent", preferences.isInEUAndUnderAgeOfConsent());
+        extras.putString("max_ad_content_rating", preferences.isUnder18() ? "T" : "MA");
+
+        mAdView.loadAd(adRequest.addNetworkExtrasBundle(AdMobAdapter.class, extras).build());
     }
 
     public void onButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnRandom:
-                if (notAcceptedPP()) {
-                    displayPrivacyPolicyNotification();
-                } else {
-                    onNewCountryClicked();
-                }
+                onNewCountryClicked();
                 break;
             case R.id.btnOpen:
                 if (checkConnection()) {
-                    sendToFirebase("Clicked Open");
                     Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + txtCountryName.getText().toString().replace(" ", "+"));
                     customTabsIntent.launchUrl(this, uri);
                 } else {
@@ -152,14 +149,13 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
                 break;
             case R.id.cBEnableAnimations:
-                saveNewCheckBoxState(cBEnableAnimations.isChecked());
+                preferences.setAnimationsEnabled(cBEnableAnimations.isChecked());
                 break;
             case R.id.txtCountryList:
                 showCountryList();
                 break;
             case R.id.btnOpenWiki:
                 if (checkConnection()) {
-                    sendToFirebase("Clicked Open Wiki");
                     Uri uri = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + txtCountryName.getText().toString() + "&language=en&go=Go");
                     customTabsIntent.launchUrl(this, uri);
                 } else {
@@ -193,17 +189,6 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private boolean isAnimationsEnabled() {
-        SharedPreferences prefs = getSharedPreferences(preferenceName, MODE_PRIVATE);
-        return prefs.getBoolean(cBPreferenceName, true);
-    }
-
-    private void saveNewCheckBoxState(boolean checked) {
-        SharedPreferences.Editor editor = getSharedPreferences(preferenceName, MODE_PRIVATE).edit();
-        editor.putBoolean(cBPreferenceName, checked);
-        editor.apply();
-    }
-
     private void onSelectContinent(CharSequence continent) {
         String selectedShort = getContinentShort(continent.toString());
         btnSettings.setText(getString(R.string.main_settings, continent.toString()));
@@ -220,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onNewCountryClicked() {
-        if (isAnimationsEnabled()) {
+        if (preferences.isAnimationsEnabled()) {
             btnRandom.setEnabled(false);
             btnOpen.setEnabled(false);
             btnOpenWiki.setEnabled(false);
@@ -230,57 +215,6 @@ public class MainActivity extends AppCompatActivity {
             onLoopStopped();
             showRandomCountry();
         }
-        sendToFirebase("Clicked Random");
-    }
-
-    private boolean notAcceptedPP() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        return !prefs.getBoolean(PREFS_ITEM, false);
-    }
-
-    private void setAcceptedPP(boolean accepted) {
-        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putBoolean(PREFS_ITEM, accepted);
-        editor.apply();
-        if (accepted) {
-            onNewCountryClicked();
-        }
-    }
-
-    private void displayPrivacyPolicyNotification() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Privacy Policy");
-        builder.setMessage(getString(R.string.main_privacy_policy_message));
-        builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                setAcceptedPP(true);
-            }
-        });
-        builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                setAcceptedPP(false);
-                finish();
-            }
-        });
-        builder.setNeutralButton("Read it", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                final Uri uri = Uri.parse("https://arctosoft.com/products/random-country-selector/privacy-policy/");
-                customTabsIntent.launchUrl(MainActivity.this, uri);
-            }
-        });
-        builder.setCancelable(false);
-        privacyBuilder = builder.create();
-        privacyBuilder.show();
-    }
-
-    private void sendToFirebase(String s) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, s);
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "button");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     private void showAbout() {
@@ -289,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.se);
         builder.setMessage(getString(R.string.main_about_message));
         builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
@@ -297,20 +230,20 @@ public class MainActivity extends AppCompatActivity {
         builder.setNeutralButton("Privacy Policy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                final Uri uri = Uri.parse("https://arctosoft.com/products/random-country-selector/privacy-policy/");
-                customTabsIntent.launchUrl(MainActivity.this, uri);
+                preferences.setPreferences(false, false, false);
+                finish();
+                startActivity(new Intent(MainActivity.this, LauncherActivity.class));
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
     }
 
-    private void showConnectionError() { // If no connection
+    private void showConnectionError() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Device offline");
         builder.setMessage("Internet connection required! Please enable it and retry.");
         builder.setPositiveButton("Ok, I'll turn it on!", new DialogInterface.OnClickListener() {
-
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
@@ -404,14 +337,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return connected;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (privacyBuilder != null && notAcceptedPP() && !privacyBuilder.isShowing()) {
-            displayPrivacyPolicyNotification();
-        }
     }
 
     private ArrayList<Country> getCountriesAsList() {
