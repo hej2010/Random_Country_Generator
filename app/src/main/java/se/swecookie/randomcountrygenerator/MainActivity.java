@@ -115,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
         AdRequest.Builder adRequest = new AdRequest.Builder();
 
         Bundle extras = new Bundle();
-        extras.putBoolean("tag_for_under_age_of_consent", preferences.isInEUAndUnderAgeOfConsent());
-        extras.putString("max_ad_content_rating", preferences.isUnder18() ? "T" : "MA");
+        if (preferences.noPersonalisedAds()) {
+            extras.putString("npa", "1");
+        }
 
         mAdView.loadAd(adRequest.addNetworkExtrasBundle(AdMobAdapter.class, extras).build());
     }
@@ -230,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setNeutralButton("Privacy Policy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                preferences.setPreferences(false, false, false);
+                preferences.setAccepted(false, false);
                 finish();
                 startActivity(new Intent(MainActivity.this, LauncherActivity.class));
             }
