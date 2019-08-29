@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean loadedSound = false;
     private Preferences preferences;
     private MainFlavour mainFlavour;
+    private Country selectedCountry = null;
 
     private final CharSequence[] continents = new CharSequence[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
 
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btnOpen:
                 if (checkConnection()) {
-                    Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + txtCountryName.getText().toString().replace(" ", "+"));
+                    Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + selectedCountry.getName().replace(" ", "+"));
                     customTabsIntent.launchUrl(this, uri);
                 } else {
                     showConnectionError();
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btnOpenWiki:
                 if (checkConnection()) {
-                    Uri uri = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + txtCountryName.getText().toString() + "&language=en&go=Go");
+                    Uri uri = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + selectedCountry.getName() + "&language=en&go=Go");
                     customTabsIntent.launchUrl(this, uri);
                 } else {
                     showConnectionError();
@@ -268,15 +269,16 @@ public class MainActivity extends AppCompatActivity {
         playSound();
         int random = (int) (Math.random() * (currentList.size()));
 
-        final Country country = currentList.get(random);
+        Country lastCountry = selectedCountry;
+        selectedCountry = currentList.get(random);
 
         // to not get the same two times in a row
-        if (country.getName().equals(txtCountryName.getText().toString())) {
+        if (selectedCountry.equals(lastCountry)) {
             showRandomCountry();
             return;
         }
 
-        setLayout(country.getName(), country.getCode(), getContinentLong(country.getContinent()));
+        setLayout(selectedCountry.getName(), selectedCountry.getCode(), getContinentLong(selectedCountry.getContinent()));
     }
 
     private void setLayout(String countryName, String countryCode, String continent) {

@@ -6,8 +6,8 @@
     <string name="main_help">Press the button to select a random country</string>
     <string name="main_generate">New country</string>
     <string name="main_settings">Continent: %1$s</string>
-    <string name="main_open">View country in Google Maps</string>
-    <string name="main_open_wiki">View country on Wikipedia</string>
+    <string name="main_open">View in Google Maps</string>
+    <string name="main_open_wiki">View on Wikipedia</string>
     <string name="main_about">About</string>
     <string name="main_country_list">Country list</string>
     <string name="main_country_list_title">Name, Continent, Alpha&#8211;2 ISO code</string>

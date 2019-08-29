@@ -1,6 +1,7 @@
 package se.swecookie.randomcountrygenerator;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 class Country {
     private final String name;
@@ -44,5 +45,13 @@ class Country {
     @Override
     public String toString() {
         return name + ", " + continent + ", " + code;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Country) {
+            return ((Country) obj).code.equals(this.code);
+        }
+        return false;
     }
 }
