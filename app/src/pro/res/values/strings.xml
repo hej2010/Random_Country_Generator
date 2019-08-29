@@ -1,17 +1,3 @@
 <resources>
     <string name="app_name">Country Selector Pro</string>
-    <string name="main_about_message">2019 © Arctosoft\nVersion 2.0</string>
-
-    <string name="main_title">Random Country Selector</string>
-    <string name="main_desc">Country flag</string>
-    <string name="main_help">Press the button to select a random country</string>
-    <string name="main_generate">New country</string>
-    <string name="main_settings">Continent: %1$s</string>
-    <string name="main_open">View country in Google Maps</string>
-    <string name="main_open_wiki">View country on Wikipedia</string>
-    <string name="main_about">About</string>
-    <string name="main_country_list">Country list</string>
-    <string name="main_country_list_title">Name, Continent, Alpha&#8211;2 ISO code</string>
-    <string name="main_enable_spinning">Enable spinning animation</string>
-
 </resources>

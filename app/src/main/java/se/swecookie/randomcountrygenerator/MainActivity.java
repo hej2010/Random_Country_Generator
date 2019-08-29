@@ -276,15 +276,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        setLayout(country.getName(), country.getCode());
+        setLayout(country.getName(), country.getCode(), getContinentLong(country.getContinent()));
     }
 
-    private void setLayout(String countryName, String countryCode) {
+    private void setLayout(String countryName, String countryCode, String continent) {
         // if country code = "do", get file do1.png (reserved java keyword)
         if (countryCode.equals("DO")) {
             countryCode = "do1";
         }
-        txtCountryName.setText(countryName);
+        txtCountryName.setText(getString(R.string.main_country_name, countryName,countryCode, continent));
 
         imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), getResources().
                 getIdentifier(countryCode.toLowerCase(), "drawable", BuildConfig.APPLICATION_ID)));
