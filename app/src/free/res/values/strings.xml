@@ -3,7 +3,7 @@
     <string name="main_privacy_policy_message">By using the app, you agree to the privacy policy and the usage of third-party cookies.</string>
     <string name="main_ad_free">Remove ads</string>
     <string name="main_remove_ads_title">Remove ads</string>
-    <string name="main_remove_ads_message">Buy the full version to remove the ads :)</string>
+    <string name="main_remove_ads_message">Buy the pro version to remove all ads</string>
     <string name="main_remove_ads_open">Show in store</string>
 
     <string name="privacy_policy_title">Privacy policy</string>
