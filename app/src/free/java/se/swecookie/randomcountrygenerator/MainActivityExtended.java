@@ -2,6 +2,7 @@ package se.swecookie.randomcountrygenerator;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -44,7 +45,9 @@ public class MainActivityExtended implements MainFlavour {
         builder.setTitle(activity.getString(R.string.main_remove_ads_title));
         builder.setMessage(activity.getString(R.string.main_remove_ads_message));
         builder.setPositiveButton(activity.getString(R.string.main_remove_ads_open), (dialog, which) -> {
-            // TODO go to market
+            Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=se.swecookie.randomcountrygenerator.pro");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            activity.startActivity(intent);
         });
         builder.setNegativeButton("Cancel", null);
         AlertDialog alert = builder.create();
