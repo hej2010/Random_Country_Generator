@@ -1,6 +1,6 @@
 package se.swecookie.randomcountrygenerator;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 class Country {
     private final String name;

@@ -5,42 +5,34 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-permission
-        android:name="android.permission.READ_PHONE_STATE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="com.google.android.c2dm.permission.RECEIVE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="se.swecookie.randomcountrygenerator.permission.C2D_MESSAGE"
-        tools:node="remove" />
-
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
-        android:icon="@mipmap/ikon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/ikon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2831297200743176~3098371641" />
+        <meta-data
+            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+            android:value="true" />
+
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize">
+            android:name=".LauncherActivity"
+            android:configChanges="screenSize|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize" />
     </application>
 </manifest>
