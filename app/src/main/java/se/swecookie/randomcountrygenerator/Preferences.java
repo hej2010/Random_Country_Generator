@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-class Preferences {
+public class Preferences {
     private static final String PREF_NAME = "accepted3";
     private static final String PREF_ACCEPTED = "accepted";
     private static final String PREF_PERSONALISED_ADS = "pa";
@@ -30,7 +30,7 @@ class Preferences {
         return getBoolean(PREF_ACCEPTED);
     }
 
-    boolean noPersonalisedAds() {
+    public boolean noPersonalisedAds() {
         return !getBoolean(PREF_PERSONALISED_ADS);
     }
 

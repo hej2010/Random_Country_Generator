@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorDark"
+    android:orientation="vertical"
+    tools:context="se.swecookie.randomcountrygenerator.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/main_title"
+            android:textAlignment="center"
+            android:textColor="@color/colorText"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imgCountryFlag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/main_desc"
+            android:maxHeight="150dp"
+            android:minHeight="150dp"
+            app:srcCompat="@drawable/se" />
+
+        <TextView
+            android:id="@+id/txtCountryName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/main_help"
+            android:textAlignment="center"
+            android:textColor="@color/colorText"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnRandom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:onClick="onButtonClicked"
+            android:text="@string/main_generate" />
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:onClick="onButtonClicked"
+            android:text="@string/main_settings" />
+
+        <Button
+            android:id="@+id/btnOpen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@android:color/holo_orange_light"
+            android:onClick="onButtonClicked"
+            android:text="@string/main_open" />
+
+        <Button
+            android:id="@+id/btnOpenWiki"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:onClick="onButtonClicked"
+            android:text="@string/main_open_wiki" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <CheckBox
+                android:id="@+id/cBEnableAnimations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:gravity="center"
+                android:onClick="onButtonClicked"
+                android:text="@string/main_enable_spinning"
+                android:theme="@style/MyCheckBox" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtCountryList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:onClick="onButtonClicked"
+            android:text="@string/main_country_list"
+            android:textAlignment="center"
+            android:textColor="@color/colorCountryList" />
+
+        <TextView
+            android:id="@+id/txtAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onButtonClicked"
+            android:text="@string/main_about"
+            android:textAlignment="center"
+            android:textColor="@color/colorAbout" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="200dp" />
+
+    </LinearLayout>
+
+</ScrollView>

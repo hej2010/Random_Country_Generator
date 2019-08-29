@@ -2,8 +2,6 @@ package se.swecookie.randomcountrygenerator;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -21,11 +19,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
-
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private int soundID;
     private boolean loadedSound = false;
     private Preferences preferences;
+    private MainFlavour mainFlavour;
 
     private final CharSequence[] continents = new CharSequence[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
 
@@ -69,12 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int i, int i1) {
-                loadedSound = true;
-            }
-        });
+        soundPool.setOnLoadCompleteListener((soundPool, i, i1) -> loadedSound = true);
         soundID = soundPool.load(this, R.raw.blip_short, 1);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         preferences = new Preferences(this);
@@ -105,21 +94,8 @@ public class MainActivity extends AppCompatActivity {
         currentList = new ArrayList<>();
         onSelectContinent(continents[0]);
 
-        loadAds();
-    }
-
-    private void loadAds() {
-        MobileAds.initialize(this, "ca-app-pub-2831297200743176~3098371641");
-
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest.Builder adRequest = new AdRequest.Builder();
-
-        Bundle extras = new Bundle();
-        if (preferences.noPersonalisedAds()) {
-            extras.putString("npa", "1");
-        }
-
-        mAdView.loadAd(adRequest.addNetworkExtrasBundle(AdMobAdapter.class, extras).build());
+        mainFlavour = new MainActivityExtended();
+        mainFlavour.loadAds(this, preferences);
     }
 
     public void onButtonClicked(View view) {
@@ -141,12 +117,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btnSettings:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Pick a continent");
-                builder.setItems(continents, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onSelectContinent(continents[which]);
-                    }
-                });
+                builder.setItems(continents, (dialog, which) -> onSelectContinent(continents[which]));
                 builder.show();
                 break;
             case R.id.cBEnableAnimations:
@@ -162,8 +133,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     showConnectionError();
                 }
-                break;
+                return;
+
         }
+        mainFlavour.onButtonClicked(view, MainActivity.this);
     }
 
     private void showCountryList() {
@@ -223,19 +196,14 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("About");
         builder.setIcon(R.drawable.se);
         builder.setMessage(getString(R.string.main_about_message));
-        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setNeutralButton("Privacy Policy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+        if (BuildConfig.FREE_VERSION) {
+            builder.setNeutralButton("Privacy Policy", (dialogInterface, i) -> {
                 preferences.setAccepted(false, false);
                 finish();
-                startActivity(new Intent(MainActivity.this, LauncherActivity.class));
-            }
-        });
+                mainFlavour.openLauncher(MainActivity.this);
+            });
+        }
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -244,11 +212,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Device offline");
         builder.setMessage("Internet connection required! Please enable it and retry.");
-        builder.setPositiveButton("Ok, I'll turn it on!", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setPositiveButton("Ok, I'll turn it on!", null);
         AlertDialog alert = builder.create();
         alert.show();
     }

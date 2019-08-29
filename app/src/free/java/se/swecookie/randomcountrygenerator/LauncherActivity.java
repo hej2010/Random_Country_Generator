@@ -20,17 +20,17 @@ public class LauncherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
+        if (!BuildConfig.FREE_VERSION) {
+            onFinish();
+            return;
+        }
+
         CheckBox cBAgree = findViewById(R.id.cBAgree);
         btnAccept = findViewById(R.id.btnAccept);
         cBPersonalisedAds = findViewById(R.id.cBPersonalisedAds);
         preferences = new Preferences(this);
 
-        cBAgree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                btnAccept.setEnabled(isChecked);
-            }
-        });
+        cBAgree.setOnCheckedChangeListener((compoundButton, isChecked) -> btnAccept.setEnabled(isChecked));
         if (preferences.isAcceptedPP()) {
             onFinish();
         }
