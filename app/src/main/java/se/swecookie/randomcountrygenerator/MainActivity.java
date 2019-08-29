@@ -122,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.cBEnableAnimations:
                 preferences.setAnimationsEnabled(cBEnableAnimations.isChecked());
+                if (!cBEnableAnimations.isChecked()) {
+                    delayInMillis = maxDelay;
+                }
                 break;
             case R.id.txtCountryList:
                 showCountryList();
