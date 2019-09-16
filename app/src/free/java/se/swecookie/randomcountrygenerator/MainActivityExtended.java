@@ -15,7 +15,7 @@ public class MainActivityExtended implements MainFlavour {
 
     @Override
     public void loadAds(MainActivity activity, Preferences preferences) {
-        MobileAds.initialize(activity, "ca-app-pub-2831297200743176~3098371641");
+        MobileAds.initialize(activity, "ca-app-pub-4450154628850316~8731636027");
 
         AdView mAdView = activity.findViewById(R.id.adView);
         AdRequest.Builder adRequest = new AdRequest.Builder();

@@ -142,6 +142,6 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-2831297200743176/5912237242" />
+        ads:adUnitId="ca-app-pub-4450154628850316/3287737656" />
 
 </RelativeLayout>

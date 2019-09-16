@@ -17,7 +17,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2831297200743176~3098371641" />
+            android:value="ca-app-pub-4450154628850316~8731636027" />
         <meta-data
             android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
             android:value="true" />
