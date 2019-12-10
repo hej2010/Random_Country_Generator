@@ -1,12 +1,23 @@
 package se.swecookie.randomcountrygenerator;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
+
+import java.util.Locale;
 
 class Country {
+    @ColumnInfo(name = "name")
     private final String name;
+    @ColumnInfo(name = "continent")
     private final String continent;
+    @ColumnInfo(name = "code")
     private final String code;
+    @Ignore
+    private int drawableID;
 
     /**
      * Creates a Country object
@@ -15,10 +26,11 @@ class Country {
      * @param continent the continent
      * @param code      the country code
      */
-    private Country(@NonNull String name, @NonNull String continent, @NonNull String code) {
+    Country(@NonNull String name, @NonNull String continent, @NonNull String code) {
         this.name = name;
         this.continent = continent;
         this.code = code;
+        this.drawableID = 0;
     }
 
     String getName() {
@@ -53,5 +65,16 @@ class Country {
             return ((Country) obj).code.equals(this.code);
         }
         return false;
+    }
+
+    public int getDrawableID(@NonNull Context context) {
+        String c = code;
+        if (c.equals("DO")) {
+            c = "do1";
+        }
+        if (drawableID == 0) {
+            drawableID = context.getResources().getIdentifier(c.toLowerCase(Locale.ENGLISH), "drawable", BuildConfig.APPLICATION_ID);
+        }
+        return drawableID;
     }
 }

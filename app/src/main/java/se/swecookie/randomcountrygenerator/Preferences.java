@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-public class Preferences {
+class Preferences {
     private static final String PREF_NAME = "accepted3";
     private static final String PREF_ACCEPTED = "accepted";
     private static final String PREF_PERSONALISED_ADS = "pa";

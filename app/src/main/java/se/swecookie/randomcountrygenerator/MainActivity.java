@@ -1,7 +1,9 @@
 package se.swecookie.randomcountrygenerator;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -54,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private MainFlavour mainFlavour;
     private Country selectedCountry = null;
 
-    private final CharSequence[] continents = new CharSequence[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
+    private final String[] continents = new String[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
+
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         soundID = soundPool.load(this, R.raw.blip_short, 1);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         preferences = new Preferences(this);
+        appDatabase = AppDatabase.getAppDatabase(this);
 
         imgCountry = findViewById(R.id.imgCountryFlag);
         txtCountryName = findViewById(R.id.txtCountryName);
@@ -138,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
                     showConnectionError();
                 }
                 return;
+            case R.id.txtHistory:
+                startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+                return;
 
         }
         mainFlavour.onButtonClicked(view, MainActivity.this);
@@ -154,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                     .append("\n\n");
         }
         LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.country_list, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.country_list, null);
 
         TextView textview = view.findViewById(R.id.txtList);
         textview.setText(sb.toString().trim());
@@ -190,8 +198,8 @@ public class MainActivity extends AppCompatActivity {
             btnSettings.setEnabled(false);
             startLoop();
         } else {
-            onLoopStopped();
             showRandomCountry();
+            onLoopStopped();
         }
     }
 
@@ -263,6 +271,8 @@ public class MainActivity extends AppCompatActivity {
         btnOpenWiki.setVisibility(View.VISIBLE);
         btnOpenWiki.setEnabled(true);
         btnSettings.setEnabled(true);
+        new Thread(() -> appDatabase.countryDao().insertAll(new CountryHistory(selectedCountry.getName(), selectedCountry.getContinent(),
+                selectedCountry.getCode(), System.currentTimeMillis()))).start();
     }
 
     private void showRandomCountry() {
@@ -278,18 +288,19 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        setLayout(selectedCountry.getName(), selectedCountry.getCode(), getContinentLong(selectedCountry.getContinent()));
+        setLayout(selectedCountry);
     }
 
-    private void setLayout(String countryName, String countryCode, String continent) {
+    private void setLayout(Country country) {
+        String countryCode = country.getCode();
+
         // if country code = "do", get file do1.png (reserved java keyword)
         if (countryCode.equals("DO")) {
             countryCode = "do1";
         }
-        txtCountryName.setText(getString(R.string.main_country_name, countryName,countryCode, continent));
+        txtCountryName.setText(getString(R.string.main_country_name, country.getName(), countryCode, getContinentLong(selectedCountry.getContinent())));
 
-        imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), getResources().
-                getIdentifier(countryCode.toLowerCase(), "drawable", BuildConfig.APPLICATION_ID)));
+        imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), country.getDrawableID(this)));
     }
 
     private boolean checkConnection() {
