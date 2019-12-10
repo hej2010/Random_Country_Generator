@@ -363,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
-    private String getContinentLong(String selectedContinent) {
+    static String getContinentLong(String selectedContinent) {
         switch (selectedContinent) {
             case "All":
                 return "All continents";

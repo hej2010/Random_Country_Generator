@@ -44,7 +44,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         if (countryCode.equals("DO")) {
             countryCode = "do1";
         }
-        holder.txtCountry.setText(context.getString(R.string.history_item, countryName, countryCode, continent));
+        holder.txtCountry.setText(context.getString(R.string.history_item, countryName, countryCode, MainActivity.getContinentLong(continent)));
         holder.txtId.setText(String.valueOf(history.size() - position));
 
         Glide.with(context)

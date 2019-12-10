@@ -29,7 +29,7 @@
 
     <TextView
         android:id="@+id/txtCountry"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
@@ -37,6 +37,7 @@
         android:textColor="@color/colorText"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imgIcon"
         app:layout_constraintTop_toTopOf="parent" />
 
