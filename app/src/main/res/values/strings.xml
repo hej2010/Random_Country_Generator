@@ -1,5 +1,5 @@
 <resources>
-    <string name="main_about_message">2019 © Arctosoft AB\nVersion 2.2</string>
+    <string name="main_about_message">2020 © Arctosoft AB\nVersion 2.3</string>
 
     <string name="main_title">Random Country Selector</string>
     <string name="main_desc">Country flag</string>
