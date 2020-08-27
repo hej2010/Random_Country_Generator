@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".HistoryActivity"></activity>
+        <activity
+            android:name=".HistoryActivity"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

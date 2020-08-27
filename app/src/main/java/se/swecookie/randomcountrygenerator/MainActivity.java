@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.ConnectivityManager;
@@ -14,8 +13,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,35 +32,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageView imgCountry;
-    private TextView txtCountryName;
-    private Button btnRandom, btnOpen, btnSettings, btnOpenWiki;
-    private CheckBox cBEnableAnimations;
-
-    private List<Country> countryList;
-    private List<Country> currentList;
-
-    private CustomTabsIntent customTabsIntent;
-
-    private int delayInMillis = delayOrigin;
-    private int exponentialValue = exponentialValueOrigin;
-    private AudioManager audioManager;
+    private static final String TAG = "MainActivity";
 
     private static final int exponentialValueOrigin = -2;
     private static final int delayOrigin = 20;
     private static final int maxDelay = 800;
     private static final double exponentialBase = 1.2;
 
-    private SoundPool soundPool;
+    private ImageSwitcher imgCountry;
+    private TextView txtCountryName;
+    private Button btnRandom, btnOpen, btnSettings, btnOpenWiki;
+    private CheckBox cBEnableAnimations;
+    private CustomTabsIntent customTabsIntent;
+
+    private int delayInMillis = delayOrigin;
+    private int exponentialValue = exponentialValueOrigin;
     private int soundID;
     private boolean loadedSound = false;
+
+    private List<Country> countryList;
+    private List<Country> currentList;
+    private Country selectedCountry = null;
+    private final String[] continents = new String[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
+    private AudioManager audioManager;
+    private SoundPool soundPool;
     private Preferences preferences;
     private MainFlavour mainFlavour;
-    private Country selectedCountry = null;
-
-    private final String[] continents = new String[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
-
     private AppDatabase appDatabase;
+    private Animation in, out;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,14 @@ public class MainActivity extends AppCompatActivity {
         btnOpenWiki = findViewById(R.id.btnOpenWiki);
         btnOpenWiki.setVisibility(View.GONE);
         cBEnableAnimations = findViewById(R.id.cBEnableAnimations);
+
+        in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+        out = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
+
+        imgCountry.setFactory(() -> new ImageView(MainActivity.this));
+        imgCountry.setImageResource(R.drawable.se);
+        imgCountry.setInAnimation(in);
+        imgCountry.setOutAnimation(out);
 
         if (preferences.isAnimationsEnabled()) {
             cBEnableAnimations.setChecked(true);
@@ -235,9 +244,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 playSound();
-                showRandomCountry();
-
                 delayInMillis += Math.pow(exponentialBase, exponentialValue++);
+
+                setDelay(delayInMillis / 2);
+                showRandomCountry();
+                //Log.e(TAG, "run: delay " + delayInMillis);
 
                 if (delayInMillis >= maxDelay) {
                     onLoopStopped();
@@ -245,6 +256,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     ha.postDelayed(this, delayInMillis);
                 }
+            }
+
+            private void setDelay(int delayInMillis) {
+                in.setDuration(delayInMillis);
+                out.setDuration(delayInMillis);
             }
         }, delayInMillis);
     }
@@ -300,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         }
         txtCountryName.setText(getString(R.string.main_country_name, country.getName(), countryCode, getContinentLong(selectedCountry.getContinent())));
 
-        imgCountry.setImageBitmap(BitmapFactory.decodeResource(getResources(), country.getDrawableID(this)));
+        imgCountry.setImageResource(country.getDrawableID(this));
     }
 
     private boolean checkConnection() {

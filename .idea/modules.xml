@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Random Country Generator.iml" filepath="$PROJECT_DIR$/Random Country Generator.iml" group="Random Country Generator" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Random_Country_Generator.iml" filepath="$PROJECT_DIR$/.idea/modules/Random_Country_Generator.iml" group="Random_Country_Generator" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Random Country Generator/app" />
     </modules>
   </component>
