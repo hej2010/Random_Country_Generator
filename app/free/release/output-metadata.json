@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "se.swecookie.randomcountrygenerator",
+  "variantName": "freeRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "properties": [],
+      "versionCode": 21,
+      "versionName": "2.4",
+      "enabled": true,
+      "outputFile": "app-free-release.apk"
+    }
+  ]
+}
