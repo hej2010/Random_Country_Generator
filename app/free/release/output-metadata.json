@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "properties": [],
-      "versionCode": 21,
-      "versionName": "2.4",
+      "versionCode": 23,
+      "versionName": "2.5",
       "enabled": true,
       "outputFile": "app-free-release.apk"
     }

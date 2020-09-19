@@ -2,12 +2,9 @@ package se.swecookie.randomcountrygenerator;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Country> currentList;
     private Country selectedCountry = null;
     private final String[] continents = new String[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
-    private AudioManager audioManager;
+    private AudioManager audioManager = null;
     private SoundPool soundPool;
     private Preferences preferences;
     private MainFlavour mainFlavour;
@@ -71,7 +68,10 @@ public class MainActivity extends AppCompatActivity {
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         soundPool.setOnLoadCompleteListener((soundPool, i, i1) -> loadedSound = true);
         soundID = soundPool.load(this, R.raw.blip_short, 1);
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        Object o = getSystemService(AUDIO_SERVICE);
+        if (o instanceof AudioManager) {
+            audioManager = (AudioManager) o;
+        }
         preferences = new Preferences(this);
         appDatabase = AppDatabase.getAppDatabase(this);
 
@@ -119,12 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 onNewCountryClicked();
                 break;
             case R.id.btnOpen:
-                if (checkConnection()) {
-                    Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + selectedCountry.getName().replace(" ", "+"));
-                    customTabsIntent.launchUrl(this, uri);
-                } else {
-                    showConnectionError();
-                }
+                Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + selectedCountry.getName().replace(" ", "+"));
+                customTabsIntent.launchUrl(this, uri);
                 break;
             case R.id.txtAbout:
                 showAbout();
@@ -145,12 +141,8 @@ public class MainActivity extends AppCompatActivity {
                 showCountryList();
                 break;
             case R.id.btnOpenWiki:
-                if (checkConnection()) {
-                    Uri uri = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + selectedCountry.getName() + "&language=en&go=Go");
-                    customTabsIntent.launchUrl(this, uri);
-                } else {
-                    showConnectionError();
-                }
+                Uri uri2 = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + selectedCountry.getName() + "&language=en&go=Go");
+                customTabsIntent.launchUrl(this, uri2);
                 return;
             case R.id.txtHistory:
                 startActivity(new Intent(MainActivity.this, HistoryActivity.class));
@@ -229,15 +221,6 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private void showConnectionError() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Device offline");
-        builder.setMessage("Internet connection required! Please enable it and retry.");
-        builder.setPositiveButton("Ok, I'll turn it on!", null);
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     private void startLoop() {
         final Handler ha = new Handler();
         ha.postDelayed(new Runnable() {
@@ -273,6 +256,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private float getVolume() {
+        if (audioManager == null) {
+            return 0.5f;
+        }
         float actualVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         float maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         return actualVolume / maxVolume;
@@ -317,23 +303,6 @@ public class MainActivity extends AppCompatActivity {
         txtCountryName.setText(getString(R.string.main_country_name, country.getName(), countryCode, getContinentLong(selectedCountry.getContinent())));
 
         imgCountry.setImageResource(country.getDrawableID(this));
-    }
-
-    private boolean checkConnection() {
-        boolean connected = false;
-        ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = null;
-        if (cm != null) {
-            activeNetwork = cm.getActiveNetworkInfo();
-        }
-        if (activeNetwork != null) {
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                connected = true;
-            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                connected = true;
-            }
-        }
-        return connected;
     }
 
     private ArrayList<Country> getCountriesAsList() {

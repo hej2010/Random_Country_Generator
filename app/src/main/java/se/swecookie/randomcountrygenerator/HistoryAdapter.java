@@ -32,6 +32,9 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull HistoryAdapter.ViewHolder holder, int position) {
+        if (history.isEmpty() || position >= history.size()) {
+            return;
+        }
         final CountryHistory c = history.get(position);
         final Context context = holder.txtCountry.getContext();
         if (context == null) {
