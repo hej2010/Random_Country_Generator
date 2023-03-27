@@ -180,13 +180,14 @@
 
     </ScrollView>
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+    <com.applovin.mediation.ads.MaxAdView xmlns:maxads="http://schemas.applovin.com/android/1.0"
         android:id="@+id/adView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/banner_height"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-4450154628850316/3287737656" />
+        android:background="@color/colorPrimaryDark"
+        android:minHeight="60dp"
+        maxads:adUnitId="a47c06d248dbab03" />
 
 </RelativeLayout>

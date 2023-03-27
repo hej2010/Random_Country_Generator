@@ -3,29 +3,32 @@ package se.swecookie.randomcountrygenerator;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.View;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.applovin.sdk.AppLovinMediationProvider;
+import com.applovin.sdk.AppLovinPrivacySettings;
+import com.applovin.sdk.AppLovinSdk;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 
 public class MainActivityExtended implements MainFlavour {
 
     @Override
     public void loadAds(MainActivity activity, Preferences preferences) {
-        MobileAds.initialize(activity);
 
-        AdView mAdView = activity.findViewById(R.id.adView);
-        AdRequest.Builder adRequest = new AdRequest.Builder();
+        RequestConfiguration conf = new RequestConfiguration.Builder()
+                .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_T) // G, PG, T, MA (3, 7, 12, 16/18)
+                .build();
+        MobileAds.setRequestConfiguration(conf);
 
-        Bundle extras = new Bundle();
-        if (preferences.noPersonalisedAds()) {
-            extras.putString("npa", "1");
-        }
+        AppLovinPrivacySettings.setHasUserConsent(preferences.noPersonalisedAds(), activity);
 
-        mAdView.loadAd(adRequest.addNetworkExtrasBundle(AdMobAdapter.class, extras).build());
+        AppLovinSdk.getInstance(activity).setMediationProvider(AppLovinMediationProvider.MAX);
+        AppLovinSdk.initializeSdk(activity, configuration -> {
+        });
+
+        MobileAds.initialize(activity, initializationStatus -> {
+        });
     }
 
     @Override

@@ -93,11 +93,7 @@ public class MainActivity extends AppCompatActivity {
         imgCountry.setInAnimation(in);
         imgCountry.setOutAnimation(out);
 
-        if (preferences.isAnimationsEnabled()) {
-            cBEnableAnimations.setChecked(true);
-        } else {
-            cBEnableAnimations.setChecked(false);
-        }
+        cBEnableAnimations.setChecked(preferences.isAnimationsEnabled());
 
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(getResources().getColor(R.color.colorDark));
@@ -114,40 +110,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btnRandom:
-                onNewCountryClicked();
-                break;
-            case R.id.btnOpen:
-                Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + selectedCountry.getName().replace(" ", "+"));
-                customTabsIntent.launchUrl(this, uri);
-                break;
-            case R.id.txtAbout:
-                showAbout();
-                break;
-            case R.id.btnSettings:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Pick a continent");
-                builder.setItems(continents, (dialog, which) -> onSelectContinent(continents[which]));
-                builder.show();
-                break;
-            case R.id.cBEnableAnimations:
-                preferences.setAnimationsEnabled(cBEnableAnimations.isChecked());
-                if (!cBEnableAnimations.isChecked()) {
-                    delayInMillis = maxDelay;
-                }
-                break;
-            case R.id.txtCountryList:
-                showCountryList();
-                break;
-            case R.id.btnOpenWiki:
-                Uri uri2 = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + selectedCountry.getName() + "&language=en&go=Go");
-                customTabsIntent.launchUrl(this, uri2);
-                return;
-            case R.id.txtHistory:
-                startActivity(new Intent(MainActivity.this, HistoryActivity.class));
-                return;
-
+        int id = view.getId();
+        if (id == R.id.btnRandom) {
+            onNewCountryClicked();
+        } else if (id == R.id.btnOpen) {
+            Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + selectedCountry.getName().replace(" ", "+"));
+            customTabsIntent.launchUrl(this, uri);
+        } else if (id == R.id.txtAbout) {
+            showAbout();
+        } else if (id == R.id.btnSettings) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Pick a continent");
+            builder.setItems(continents, (dialog, which) -> onSelectContinent(continents[which]));
+            builder.show();
+        } else if (id == R.id.cBEnableAnimations) {
+            preferences.setAnimationsEnabled(cBEnableAnimations.isChecked());
+            if (!cBEnableAnimations.isChecked()) {
+                delayInMillis = maxDelay;
+            }
+        } else if (id == R.id.txtCountryList) {
+            showCountryList();
+        } else if (id == R.id.btnOpenWiki) {
+            Uri uri2 = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + selectedCountry.getName() + "&language=en&go=Go");
+            customTabsIntent.launchUrl(this, uri2);
+            return;
+        } else if (id == R.id.txtHistory) {
+            startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+            return;
         }
         mainFlavour.onButtonClicked(view, MainActivity.this);
     }

@@ -17,7 +17,7 @@
 
     <string name="privacy_policy_content">This Privacy Policy is available at any time from About->Privacy Policy.\n\n
 
-    Last updated: 2019–09-16\n\n
+    Last updated: 2023–03-27\n\n
 
     Arctosoft AB (\"we\", \"us\") operate the application \"Random Country Selector\" (the \"app\", \"RCS\"). This text informs you of the policies regarding the collection, use and disclosure of Personal Information we receive from users of the App.\n\n
 
@@ -33,8 +33,9 @@
     <b>Third Party Services &amp; Cookies</b>\n
     We use third party services to serve ads. These include:\n\n
 
-    <b>- Cookies &amp; AdMob:</b>\n
-    We use banner &amp; interstitial ads in the app, (AdMob ads) to keep it free.\n\n
+    <b>- Cookies &amp; Ad networks:</b>\n
+    We use banner ads in the app, (AdMob &amp; AppLovin ads) to keep it free.\n\n
+    &#8212; The AppLovin privacy policy can be found here: https://www.applovin.com/privacy/\n\n
     &#8212; Third parties, including Google, use cookies to serve ads based on the user\'s prior visits to the App and other websites.\n\n
     &#8212; Google\'s use of advertising cookies enables it and its partners to serve ads to users of the App, based on their visit to the App and/or other sites on the Internet.\n\n
     &#8212; Other third parties may also display ads in the App. For a full list, visit adwords-vendors <i>(https://developers.google.com/third-party-ads/adwords-vendors)</i> and adx-vendors <i>(https://developers.google.com/third-party-ads/adx-vendors)</i>.\n\n

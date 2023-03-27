@@ -12,8 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter<HistoryAdapter.ViewHolder> mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     private List<CountryHistory> history;
@@ -24,7 +23,7 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);

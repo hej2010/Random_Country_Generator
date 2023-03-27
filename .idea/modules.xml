@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Random_Country_Generator.iml" filepath="$PROJECT_DIR$/.idea/modules/Random_Country_Generator.iml" group="Random_Country_Generator" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Random Country Generator/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Random_Country_Generator.iml" filepath="$PROJECT_DIR$/.idea/modules/Random_Country_Generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Random_Country_Generator.app.unitTest.iml" />
     </modules>
   </component>
 </project>
