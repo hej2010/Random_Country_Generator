@@ -180,14 +180,13 @@
 
     </ScrollView>
 
-    <com.applovin.mediation.ads.MaxAdView xmlns:maxads="http://schemas.applovin.com/android/1.0"
+    <FrameLayout
         android:id="@+id/adView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/banner_height"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/colorPrimaryDark"
-        android:minHeight="60dp"
-        maxads:adUnitId="a47c06d248dbab03" />
+        android:minHeight="@dimen/banner_height" />
 
 </RelativeLayout>

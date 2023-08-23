@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.browser.customtabs.CustomTabsIntent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtCountryName;
     private Button btnRandom, btnOpen, btnSettings, btnOpenWiki;
     private CheckBox cBEnableAnimations;
-    private CustomTabsIntent customTabsIntent;
 
     private int delayInMillis = delayOrigin;
     private int exponentialValue = exponentialValueOrigin;
@@ -95,12 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
         cBEnableAnimations.setChecked(preferences.isAnimationsEnabled());
 
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.setToolbarColor(getResources().getColor(R.color.colorDark));
-        builder.enableUrlBarHiding();
-        builder.setShowTitle(true);
-        customTabsIntent = builder.build();
-
         countryList = getCountriesAsList();
         currentList = new ArrayList<>();
         onSelectContinent(continents[0]);
@@ -115,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             onNewCountryClicked();
         } else if (id == R.id.btnOpen) {
             Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + selectedCountry.getName().replace(" ", "+"));
-            customTabsIntent.launchUrl(this, uri);
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } else if (id == R.id.txtAbout) {
             showAbout();
         } else if (id == R.id.btnSettings) {
@@ -132,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             showCountryList();
         } else if (id == R.id.btnOpenWiki) {
             Uri uri2 = Uri.parse("https://www.wikipedia.org/search-redirect.php?family=wikipedia&language=en&search=" + selectedCountry.getName() + "&language=en&go=Go");
-            customTabsIntent.launchUrl(this, uri2);
+            startActivity(new Intent(Intent.ACTION_VIEW, uri2));
             return;
         } else if (id == R.id.txtHistory) {
             startActivity(new Intent(MainActivity.this, HistoryActivity.class));

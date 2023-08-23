@@ -4,7 +4,10 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
+import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
@@ -25,10 +28,34 @@ public class MainActivityExtended implements MainFlavour {
 
         AppLovinSdk.getInstance(activity).setMediationProvider(AppLovinMediationProvider.MAX);
         AppLovinSdk.initializeSdk(activity, configuration -> {
+            if (!activity.isFinishing() && !activity.isDestroyed()) {
+                createBannerAd(activity);
+            }
         });
 
         MobileAds.initialize(activity, initializationStatus -> {
         });
+    }
+
+    private void createBannerAd(MainActivity activity) {
+        MaxAdView adView = new MaxAdView("a47c06d248dbab03", activity);
+
+        // Stretch to the width of the screen for banners to be fully functional
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+
+        // Banner height on phones and tablets is 50 and 90, respectively
+        int heightPx = activity.getResources().getDimensionPixelSize(R.dimen.banner_height);
+
+        adView.setLayoutParams(new FrameLayout.LayoutParams(width, heightPx));
+
+        // Set background or background color for banners to be fully functional
+        adView.setBackgroundColor(activity.getResources().getColor(R.color.colorPrivacyBG));
+
+        ViewGroup rootView = activity.findViewById(R.id.adView);
+        rootView.addView(adView);
+
+        // Load the ad
+        adView.loadAd();
     }
 
     @Override
