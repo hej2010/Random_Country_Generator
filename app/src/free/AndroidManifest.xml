@@ -19,19 +19,5 @@
         <meta-data
             android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
             android:value="true" />
-
-        <activity
-            android:name=".LauncherActivity"
-            android:exported="true"
-            android:configChanges="screenSize|orientation">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize" />
     </application>
 </manifest>

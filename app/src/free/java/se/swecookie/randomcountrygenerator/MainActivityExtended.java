@@ -7,10 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdFormat;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.sdk.AppLovinCmpService;
 import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
+import com.applovin.sdk.AppLovinSdkSettings;
+import com.applovin.sdk.AppLovinSdkUtils;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 
@@ -18,44 +27,90 @@ public class MainActivityExtended implements MainFlavour {
 
     @Override
     public void loadAds(MainActivity activity, Preferences preferences) {
-
         RequestConfiguration conf = new RequestConfiguration.Builder()
                 .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_T) // G, PG, T, MA (3, 7, 12, 16/18)
                 .build();
         MobileAds.setRequestConfiguration(conf);
 
-        AppLovinPrivacySettings.setHasUserConsent(preferences.noPersonalisedAds(), activity);
+        AppLovinPrivacySettings.setIsAgeRestrictedUser(false, activity);
 
-        AppLovinSdk.getInstance(activity).setMediationProvider(AppLovinMediationProvider.MAX);
+        AppLovinSdkSettings settings = new AppLovinSdkSettings(activity);
+        settings.getTermsAndPrivacyPolicyFlowSettings().setEnabled(true);
+        settings.getTermsAndPrivacyPolicyFlowSettings().setPrivacyPolicyUri(Uri.parse("https://arctosoft.com/apps/random-country-selector/privacy-policy/"));
+
+        // Terms of Service URL is optional
+        //settings.getTermsAndPrivacyPolicyFlowSettings().setTermsOfServiceUri( Uri.parse( "https://your_company_name.com/terms_of_service" ) );
+
+        AppLovinSdk.getInstance(settings, activity).setMediationProvider(AppLovinMediationProvider.MAX);
         AppLovinSdk.initializeSdk(activity, configuration -> {
             if (!activity.isFinishing() && !activity.isDestroyed()) {
                 createBannerAd(activity);
             }
         });
-
-        MobileAds.initialize(activity, initializationStatus -> {
-        });
     }
 
     private void createBannerAd(MainActivity activity) {
         MaxAdView adView = new MaxAdView("a47c06d248dbab03", activity);
-
-        // Stretch to the width of the screen for banners to be fully functional
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
 
-        // Banner height on phones and tablets is 50 and 90, respectively
-        int heightPx = activity.getResources().getDimensionPixelSize(R.dimen.banner_height);
+        // Get the adaptive banner height.
+        int heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).getHeight();
+        int heightPx = AppLovinSdkUtils.dpToPx(activity, heightDp);
 
         adView.setLayoutParams(new FrameLayout.LayoutParams(width, heightPx));
+        adView.setExtraParameter("adaptive_banner", "true");
 
         // Set background or background color for banners to be fully functional
-        adView.setBackgroundColor(activity.getResources().getColor(R.color.colorPrivacyBG));
+        //adView.setBackgroundColor(R.color.);
 
+        //ViewGroup rootView = findViewById(android.R.id.content);
         ViewGroup rootView = activity.findViewById(R.id.adView);
         rootView.addView(adView);
 
+        adView.setListener(new MaxAdViewAdListener() {
+            @Override
+            public void onAdExpanded(MaxAd ad) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(MaxAd ad) {
+
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull MaxAd maxAd) {
+                adView.setLayoutParams(new FrameLayout.LayoutParams(width, AppLovinSdkUtils.dpToPx(activity, maxAd.getSize().getHeight())));
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd ad) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd ad) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd ad) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String adUnitId, MaxError error) {
+
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd ad, MaxError error) {
+
+            }
+        });
         // Load the ad
         adView.loadAd();
+        adView.startAutoRefresh();
     }
 
     @Override
@@ -67,7 +122,12 @@ public class MainActivityExtended implements MainFlavour {
 
     @Override
     public void openLauncher(MainActivity activity) {
-        activity.startActivity(new Intent(activity, LauncherActivity.class));
+        AppLovinCmpService cmpService = AppLovinSdk.getInstance(activity).getCmpService();
+        cmpService.showCmpForExistingUser(activity, error -> {
+            if (null == error) {
+                // The CMP alert was shown successfully.
+            }
+        });
     }
 
     private void showAdFree(MainActivity activity) {

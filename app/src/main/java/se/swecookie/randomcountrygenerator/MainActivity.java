@@ -187,15 +187,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAbout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("About");
+        builder.setTitle(getString(R.string.about));
         builder.setIcon(R.drawable.se);
         builder.setMessage(getString(R.string.main_about_message));
-        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton(getString(R.string.close), (dialog, which) -> dialog.dismiss());
         if (BuildConfig.FREE_VERSION) {
-            builder.setNeutralButton("Privacy Policy", (dialogInterface, i) -> {
-                preferences.setAccepted(false, false);
-                finish();
-                mainFlavour.openLauncher(MainActivity.this);
+            builder.setNeutralButton(getString(R.string.consent_form), (dialogInterface, i) -> {
+                mainFlavour.openLauncher(this);
             });
         }
         AlertDialog alert = builder.create();

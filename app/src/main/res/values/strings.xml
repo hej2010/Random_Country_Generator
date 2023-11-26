@@ -1,5 +1,5 @@
 <resources>
-    <string name="main_about_message">2020 © Arctosoft AB\nVersion 2.7</string>
+    <string name="main_about_message">2020 © Arctosoft AB\nVersion 2.8</string>
 
     <string name="main_title">Random Country Selector</string>
     <string name="main_desc">Country flag</string>
@@ -19,5 +19,8 @@
     <string name="history_item">%1$s (%2$s, %3$s)</string>
     <string name="history_empty">You have no history yet!\n\nGenerate some countries and come back here</string>
     <string name="history_clear">Clear history</string>
+    <string name="consent_form">Consent form</string>
+    <string name="about">About</string>
+    <string name="close">Close</string>
 
 </resources>
