@@ -1,5 +1,5 @@
 <resources>
-    <string name="main_about_message">2020 © Arctosoft AB\nVersion 2.8</string>
+    <string name="main_about_message">2020 © Arctosoft AB\nVersion 2.9</string>
 
     <string name="main_title">Random Country Selector</string>
     <string name="main_desc">Country flag</string>
@@ -13,7 +13,12 @@
     <string name="main_history">History</string>
     <string name="main_country_list_title">Name, Continent, Alpha&#8211;2 ISO code</string>
     <string name="main_enable_spinning">Enable spinning animation</string>
+    <string name="main_exclude_previous">Exclude previously selected countries</string>
+    <string name="main_exclude_previous_remaining">Countries remaining: %1$d</string>
     <string name="main_country_name">%1$s\n(%2$s, %3$s)</string>
+    <string name="main_excluded_empty_title">No countries remaining</string>
+    <string name="main_excluded_empty_body">All countries in the continent %1$s have been selected. Choose another continent or press \"reset\" to start again!</string>
+    <string name="reset">Reset</string>
 
     <string name="history_title">Country history</string>
     <string name="history_item">%1$s (%2$s, %3$s)</string>

@@ -28,8 +28,6 @@
         <activity
             android:name=".HistoryActivity"
             android:configChanges="orientation|screenSize" />
-        <meta-data android:name="applovin.sdk.key"
-            android:value="Da8CiknOSINgIwr_cL_2TuK21qwexDf8v22anyN7UT9SfqI-gb0uAyHknrVyDgbmQeeVKDlGoTaDNbFff1yoAP"/>
     </application>
 
 </manifest>

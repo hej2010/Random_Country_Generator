@@ -16,33 +16,25 @@ import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.sdk.AppLovinCmpService;
 import com.applovin.sdk.AppLovinMediationProvider;
-import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
+import com.applovin.sdk.AppLovinSdkInitializationConfiguration;
 import com.applovin.sdk.AppLovinSdkSettings;
 import com.applovin.sdk.AppLovinSdkUtils;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 
 public class MainActivityExtended implements MainFlavour {
 
     @Override
     public void loadAds(MainActivity activity, Preferences preferences) {
-        RequestConfiguration conf = new RequestConfiguration.Builder()
-                .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_T) // G, PG, T, MA (3, 7, 12, 16/18)
+        AppLovinSdkInitializationConfiguration initConfig = AppLovinSdkInitializationConfiguration.builder("Da8CiknOSINgIwr_cL_2TuK21qwexDf8v22anyN7UT9SfqI-gb0uAyHknrVyDgbmQeeVKDlGoTaDNbFff1yoAP", activity)
+                .setMediationProvider(AppLovinMediationProvider.MAX)
                 .build();
-        MobileAds.setRequestConfiguration(conf);
 
-        AppLovinPrivacySettings.setIsAgeRestrictedUser(false, activity);
-
-        AppLovinSdkSettings settings = new AppLovinSdkSettings(activity);
+        AppLovinSdkSettings settings = AppLovinSdk.getInstance(activity).getSettings();
         settings.getTermsAndPrivacyPolicyFlowSettings().setEnabled(true);
         settings.getTermsAndPrivacyPolicyFlowSettings().setPrivacyPolicyUri(Uri.parse("https://arctosoft.com/apps/random-country-selector/privacy-policy/"));
 
-        // Terms of Service URL is optional
-        //settings.getTermsAndPrivacyPolicyFlowSettings().setTermsOfServiceUri( Uri.parse( "https://your_company_name.com/terms_of_service" ) );
-
-        AppLovinSdk.getInstance(settings, activity).setMediationProvider(AppLovinMediationProvider.MAX);
-        AppLovinSdk.initializeSdk(activity, configuration -> {
+        // Initialize the SDK with the configuration
+        AppLovinSdk.getInstance(activity).initialize(initConfig, sdkConfig -> {
             if (!activity.isFinishing() && !activity.isDestroyed()) {
                 createBannerAd(activity);
             }

@@ -8,6 +8,7 @@ import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -36,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
     private static final double exponentialBase = 1.2;
 
     private ImageSwitcher imgCountry;
-    private TextView txtCountryName;
+    private TextView txtCountryName, txtRemaining;
     private Button btnRandom, btnOpen, btnSettings, btnOpenWiki;
-    private CheckBox cBEnableAnimations;
+    private CheckBox cBEnableAnimations, cBExcludePreviousCountries;
 
     private int delayInMillis = delayOrigin;
     private int exponentialValue = exponentialValueOrigin;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Country> currentList;
     private Country selectedCountry = null;
     private final String[] continents = new String[]{"All", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"};
+    private String selectedContinent = continents[0];
     private AudioManager audioManager = null;
     private SoundPool soundPool;
     private Preferences preferences;
@@ -82,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         btnOpenWiki = findViewById(R.id.btnOpenWiki);
         btnOpenWiki.setVisibility(View.GONE);
         cBEnableAnimations = findViewById(R.id.cBEnableAnimations);
+        cBExcludePreviousCountries = findViewById(R.id.cb_exclude_previous_countries);
+        txtRemaining = findViewById(R.id.txtRemaining);
 
         in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
         out = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
@@ -92,10 +96,18 @@ public class MainActivity extends AppCompatActivity {
         imgCountry.setOutAnimation(out);
 
         cBEnableAnimations.setChecked(preferences.isAnimationsEnabled());
+        cBExcludePreviousCountries.setChecked(false);
 
         countryList = getCountriesAsList();
         currentList = new ArrayList<>();
         onSelectContinent(continents[0]);
+        cBExcludePreviousCountries.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (!isChecked) {
+                onSelectContinent(selectedContinent);
+            }
+            txtRemaining.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            txtRemaining.setText(getString(R.string.main_exclude_previous_remaining, currentList.size()));
+        });
 
         mainFlavour = new MainActivityExtended();
         mainFlavour.loadAds(this, preferences);
@@ -158,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSelectContinent(CharSequence continent) {
+        this.selectedContinent = (String) continent;
         String selectedShort = getContinentShort(continent.toString());
         btnSettings.setText(getString(R.string.main_settings, continent.toString()));
         currentList.clear();
@@ -170,14 +183,23 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        txtRemaining.setText(getString(R.string.main_exclude_previous_remaining, currentList.size()));
     }
 
     private void onNewCountryClicked() {
-        if (preferences.isAnimationsEnabled()) {
+        if (currentList.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.main_excluded_empty_title));
+            builder.setMessage(getString(R.string.main_excluded_empty_body, selectedContinent));
+            builder.setNeutralButton(getString(R.string.reset), (dialog, which) -> onSelectContinent(selectedContinent));
+            builder.setPositiveButton(getString(android.R.string.ok), null);
+            builder.show();
+        } else if (preferences.isAnimationsEnabled()) {
             btnRandom.setEnabled(false);
             btnOpen.setEnabled(false);
             btnOpenWiki.setEnabled(false);
             btnSettings.setEnabled(false);
+            cBExcludePreviousCountries.setEnabled(false);
             startLoop();
         } else {
             showRandomCountry();
@@ -252,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
         btnOpenWiki.setVisibility(View.VISIBLE);
         btnOpenWiki.setEnabled(true);
         btnSettings.setEnabled(true);
+        cBExcludePreviousCountries.setEnabled(true);
         new Thread(() -> appDatabase.countryDao().insertAll(new CountryHistory(selectedCountry.getName(), selectedCountry.getContinent(),
                 selectedCountry.getCode(), System.currentTimeMillis()))).start();
     }
@@ -267,6 +290,11 @@ public class MainActivity extends AppCompatActivity {
         if (selectedCountry.equals(lastCountry)) {
             showRandomCountry();
             return;
+        }
+        if (cBExcludePreviousCountries.isChecked()) {
+            currentList.remove(random);
+            txtRemaining.setText(getString(R.string.main_exclude_previous_remaining, currentList.size()));
+            Log.e(TAG, "showRandomCountry: removed " + random + ", remaining: " + currentList.size());
         }
 
         setLayout(selectedCountry);
