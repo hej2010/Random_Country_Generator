@@ -115,8 +115,9 @@
     <country code="KZ" continent="AS">Kazakhstan</country>
     <country code="KE" continent="AF">Kenya</country>
     <country code="KI" continent="OC">Kiribati</country>
-    <country code="KP" continent="AS">Democratic People's Republic Of Korea</country>
-    <country code="KR" continent="AS">Republic Of Korea</country>
+    <country code="XK" continent="EU">Kosovo</country>
+    <country code="KP" continent="AS">North Korea</country>
+    <country code="KR" continent="AS">South Korea</country>
     <country code="KW" continent="AS">Kuwait</country>
     <country code="KG" continent="AS">Kyrgyzstan</country>
     <country code="LA" continent="AS">Lao People's Democratic Republic</country>
@@ -129,7 +130,7 @@
     <country code="LT" continent="EU">Lithuania</country>
     <country code="LU" continent="EU">Luxembourg</country>
     <country code="MO" continent="AS">Macao</country>
-    <country code="MK" continent="EU">The Former Yugoslav Republic Of Macedonia</country>
+    <country code="MK" continent="EU">North Macedonia</country>
     <country code="MG" continent="AF">Madagascar</country>
     <country code="MW" continent="AF">Malawi</country>
     <country code="MY" continent="AS">Malaysia</country>
@@ -209,7 +210,7 @@
     <country code="SD" continent="AF">Sudan</country>
     <country code="SR" continent="SA">Suriname</country>
     <country code="SJ" continent="EU">Svalbard And Jan Mayen Islands</country>
-    <country code="SZ" continent="AF">Swaziland</country>
+    <country code="SZ" continent="AF">Eswatini</country>
     <country code="SE" continent="EU">Sweden</country>
     <country code="CH" continent="EU">Switzerland</country>
     <country code="SY" continent="AS">Syrian Arab Republic</country>
@@ -231,6 +232,10 @@
     <country code="UA" continent="EU">Ukraine</country>
     <country code="AE" continent="AS">United Arab Emirates</country>
     <country code="GB" continent="EU">United Kingdom</country>
+    <country code="GB" continent="EU">England</country>
+    <country code="GB" continent="EU">Scotland</country>
+    <country code="GB" continent="EU">Wales</country>
+    <country code="GB" continent="EU">Northern Ireland</country>
     <country code="US" continent="NA">United States</country>
     <country code="UM" continent="OC">United States Minor Outlying Islands</country>
     <country code="UY" continent="SA">Uruguay</country>

@@ -33,3 +33,6 @@
     public static int w(...);
     public static int e(...);
 }
+
+-dontwarn android.media.LoudnessCodecController$OnLoudnessCodecUpdateListener
+-dontwarn android.media.LoudnessCodecController
